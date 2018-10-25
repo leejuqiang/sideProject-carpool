@@ -1,0 +1,8 @@
+save to a sh file, input in terminal:
+chmod +x yourshfile
+
+run sh file:
+./yourshfile
+
+run mongodb:
+mongod --dbpath yourpath --port 12700
