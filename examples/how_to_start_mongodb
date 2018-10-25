@@ -8,7 +8,7 @@ run sh file:
 run mongodb:
 mongod --dbpath yourpath --port 12700
 mongodb controller
-mongo --port 12700
+mongo --port 8081
 
 node js module:
 npm install log4js
