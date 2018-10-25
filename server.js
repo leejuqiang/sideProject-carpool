@@ -8,7 +8,7 @@ const options = { "key": moduleFs.readFileSync("./privatekey.pem"), "cert": modu
 
 function requestFile(path, res) {
     if (path === "/") {
-        path = "/index.html";
+        path = "/frontEnd/index.html";
     }
     moduleFs.readFile("." + path, function (error, data) {
         if (error) {
