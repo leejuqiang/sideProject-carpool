@@ -1,0 +1,7 @@
+Data structure:
+user: userID:string, name:string, password:string, sessionID:string, expire:number(time stamp)
+driver:
+passenger:
+invitation:
+
+Protocol:

@@ -8,8 +8,9 @@ const options = { "key": moduleFs.readFileSync("./privatekey.pem"), "cert": modu
 
 function requestFile(path, res) {
     if (path === "/") {
-        path = "/frontEnd/index.html";
+        path = "/index.html";
     }
+    path = "/frontEnd" + path;
     moduleFs.readFile("." + path, function (error, data) {
         if (error) {
             return serverResponse(res, 404, "404 Not Found");
