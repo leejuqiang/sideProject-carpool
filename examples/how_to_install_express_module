@@ -1,3 +1,10 @@
 type in command line
 cd to/your/project/repository
 npm install express
+
+
+To add a handler, take login as example:
+1 create login.js. In this js, must declare interface "exports.onRequest = function(req, res){}".
+2 put the handler to express's map, in server.js, add such line "app.post("/login", require("./login").onRequest)". app.post means it's a post request.
+"/login" is the path. "onRequest" is the interface in login.js.
+3 to send response to client, use server.respond(res, code, body). res is the res passed to your onRequest function. code is the http code. body is the http body.
