@@ -1,12 +1,78 @@
 Data structure:
 user: userID:string, name:string, password:string, sessionID:string, expire:number(time stamp)
 
-driverrepeatedpost: userID: string, id: string, lat: number, long: number, avaliable: [[], []], time: [[], []], maxSeats: number
-driveradditionalpost: userID: string, id: string, lat: number, long: number, date: string, time: string
+driverrepeatedpost: userID: string, id: string, lat: number, long: number, availableSeats: [[], []], time: [[], []], maxSeats: number, semester:string
+example: {userID: "sdf"}
+
+driveradditionalpost: userID: string, id: string, lat: number, long: number, date: string, time: string, maxSeats: number, availableSeats: number
 drivercanceledpost: userID: string, id:string, date:string, postID:string, time: string
 
-applying: userID: string id: string, postID: string, day: string, time: string, number: number, status:int
+repeatedapplication: userID: string, id: string, driverPostID: string, day: string, time: string, passengerNumber: number, status:number
+additionalapplication: userID: string, id: string, driverPostID: string, status:number, passengerNumber: number
 
-mutex: userID: string, application: [string]
+mutex: userID: string, application: [[string]]
 
 Protocol:
+response body: {error: number}
+request body: {sessionID: string(except login), userID: string}
+
+login: POST /login
+client to server: userID: string, password: string
+server to client: userID: string, sessionID: string, name: string, error: number
+
+refresh: POST /refresh
+client to server: sessionID: string, userID: string
+server to client: repeatedPost:[], additionalPost:[], cancellationPost:[], repeatedApplication:[], additionalApplication:[]
+
+repeatedPanel: POST /repeatedPanel
+client to server: sessionID: string, userID: string, semester: string, lat: number, long: number, range: number, passengerNumber: number
+server to client: availableSeats:[ day:[driver number for each time], day:[]]
+example: [[], [[1, 3, 4, 2, ], ....[]]
+        
+singlePanel: POST /singlePanel
+client to server: sessionID: string, userID: string, startDate: string, endDate: string, lat: number, long: number, range: number, passengerNumber: number
+server to client: availableSeats: {date: [driver number for each time]}
+
+repeatedDriverList: POST /repeatedDriverList
+client to server: sessionID: string, userID: string, day: number, time: string, lat: number, long: number, range: number, passengerNumber: number
+server to client: user:[{userID:string, name: string, availableSeats: number, lat: number, long: number, postID: string} {}]
+
+singleDriverList: POST /singleDriverList
+client to server: sessionID: string, userID: string, date: string, time: string, lat: number, long: number, range: number, passengerNumber: number
+server to client: user: [{userID:string, name: string, availableSeats: number, postID: string}]
+
+repeatedApply: POST /repeatedApply
+client to server: sessionID: string, userID: string, application: [{day:string, time: string, postID:[if empty, select all]}, {}]
+server to client: result:[{applicationID:string, postID: string, status: number}]
+
+singleApply: POST /singleApply
+client to server: sessionID: string, userID: string, application: [{date: string, time: string, postID:[]}, {}]
+server to client: result: [{applicationID: string, postID: string, status: number}]
+
+driverResponse: POST /driverResponse
+client to server: sessionID: string, userID: string, applicationID: string, status: number
+server to client: 
+
+repeatedDriverPost: POST /repeateddriverPost
+client to server: sessionID: string, userID: string, lat: number, long: number, time: [[string], [string]], seatNumber: number, semester: string
+server to client:
+
+additionalDriverPost: POST /additionalDriverPost
+client to server: sessionID: string, userID: string, lat: number, long: number, date: string, time: string, seatNumber: number
+server to client:
+
+driverCancelRepeatedPost: POST /driverCancelRepeatedPost
+client to server: postID: string, day: int, time: string
+server to client:
+
+driverDeleteSinglePost: DEL /driverCancelSinglePost
+client to server: postID: string
+server to client:
+
+revertRepeatedCancellation: POST /revertRepeatedCancellation
+client to server: postID: string
+server to client:
+
+withdrawApplication: POST /withdrawApplication
+client to server: applicationID: string
+server to client:
