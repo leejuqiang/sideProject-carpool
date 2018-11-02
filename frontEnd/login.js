@@ -1,7 +1,8 @@
 function onLogin() {
     var usr = $("#userName").val();
     var pass = $("#pass").val();
-    $.post("/login", { "userName": usr, "password": pass, "isDriver": true }, function (data, status, xhr) {
+    var body = { "userName": usr, "password": pass, "isDriver": true };
+    $.post("/login", JSON.stringify(body), function (data, status, xhr) {
         console.log(data);
         var dataObj = JSON.parse(data);
         var now = new Date();
