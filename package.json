@@ -4,6 +4,7 @@
   "description": "carpool side project",
   "main": "server.js",
   "dependencies": {
+    "express": "^4.16.4",
     "log4js": "^3.0.6",
     "mongodb": "^3.1.8"
   },

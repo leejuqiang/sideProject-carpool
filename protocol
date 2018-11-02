@@ -1,7 +1,12 @@
 Data structure:
 user: userID:string, name:string, password:string, sessionID:string, expire:number(time stamp)
-driver:
-passenger:
-invitation:
+
+driverrepeatedpost: userID: string, id: string, lat: number, long: number, avaliable: [[], []], time: [[], []], maxSeats: number
+driveradditionalpost: userID: string, id: string, lat: number, long: number, date: string, time: string
+drivercanceledpost: userID: string, id:string, date:string, postID:string, time: string
+
+applying: userID: string id: string, postID: string, day: string, time: string, number: number, status:int
+
+mutex: userID: string, application: [string]
 
 Protocol:
