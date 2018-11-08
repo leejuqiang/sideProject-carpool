@@ -1,14 +1,14 @@
 Data structure:
-user: userID:string, name:string, password:string, sessionID:string, expire:number(time stamp)
+user: name:string, password:string, sessionID:string, expire:number(time stamp)
 
-driverrepeatedpost: userID: string, id: string, lat: number, long: number, availableSeats: [[], []], time: [[], []], maxSeats: number, semester:string
+driverrepeatedpost: userID: string, lat: number, long: number, availableSeats: [[], []], time: [[], []], maxSeats: number, semester:string
 example: {userID: "sdf"}
 
-driveradditionalpost: userID: string, id: string, lat: number, long: number, date: string, time: string, maxSeats: number, availableSeats: number
-drivercanceledpost: userID: string, id:string, date:string, postID:string, time: string
+driveradditionalpost: userID: string, lat: number, long: number, date: string, time: string, maxSeats: number, availableSeats: number
+drivercanceledpost: userID: string, date:string, postID:string, time: string
 
-repeatedapplication: userID: string, id: string, driverPostID: [string], day: string, time: string, passengerNumber: number, status:number
-additionalapplication: userID: string, id: string, driverPostID: [string], status:number, passengerNumber: number
+repeatedapplication: userID: string, driverPostID: [string], day: string, time: string, passengerNumber: number, status:number
+additionalapplication: userID: string, driverPostID: [string], status:number, passengerNumber: number
 
 Protocol:
 response body: {error: number}
