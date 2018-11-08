@@ -13,3 +13,22 @@ mongo --port 8081
 node js module:
 npm install log4js
 npm install mongodb
+
+
+insert data:
+use carpool             //switch to carpool
+show collections        //show all collections
+db.collection name.drop()  //make sure delete all collections created before
+
+db.createCollection("user")
+db.createCollection("driverrepeatedpost")
+db.createCollection("driveradditionalpost")
+db.createCollection("drivercanceledpost")
+db.createCollection("repeatedapplication")
+db.createCollection("additionalapplication")
+
+db.user.insert({"userID":"1","name":"Li","password":"1234","sessionID":"1234567","expire":0})
+db.user.insert({"userID":"2","name":"Zun","password":"1234","sessionID":"12345678","expire":0})
+
+
+

@@ -7,10 +7,8 @@ example: {userID: "sdf"}
 driveradditionalpost: userID: string, id: string, lat: number, long: number, date: string, time: string, maxSeats: number, availableSeats: number
 drivercanceledpost: userID: string, id:string, date:string, postID:string, time: string
 
-repeatedapplication: userID: string, id: string, driverPostID: string, day: string, time: string, passengerNumber: number, status:number
-additionalapplication: userID: string, id: string, driverPostID: string, status:number, passengerNumber: number
-
-mutex: userID: string, application: [[string]]
+repeatedapplication: userID: string, id: string, driverPostID: [string], day: string, time: string, passengerNumber: number, status:number
+additionalapplication: userID: string, id: string, driverPostID: [string], status:number, passengerNumber: number
 
 Protocol:
 response body: {error: number}
