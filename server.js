@@ -33,6 +33,7 @@ exports.logger = moduleLog.getLogger("default");
 const options = { "key": moduleFs.readFileSync("./privatekey.pem"), "cert": moduleFs.readFileSync("cert.pem") };
 
 app.post("/login", require("./login").onRequest);
+app.post("/driver")
 
 exports.respond = function (res, code, body) {
     res.writeHead(code, { "Content-Type": "text/html" });
