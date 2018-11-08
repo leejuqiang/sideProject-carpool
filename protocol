@@ -61,6 +61,10 @@ additionalDriverPost: POST /additionalDriverPost
 client to server: sessionID: string, userID: string, lat: number, long: number, date: string, time: string, seatNumber: number
 server to client:
 
+revertDriverRepeatedPost: DEL /revertDriverRepeatedPost
+client to server: postID: string
+server to client:
+
 driverCancelRepeatedPost: POST /driverCancelRepeatedPost
 client to server: postID: string, day: int, time: string
 server to client:
