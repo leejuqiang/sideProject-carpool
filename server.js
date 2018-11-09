@@ -33,13 +33,13 @@ exports.logger = moduleLog.getLogger("default");
 const options = { "key": moduleFs.readFileSync("./privatekey.pem"), "cert": moduleFs.readFileSync("cert.pem") };
 
 app.post("/login", require("./login").onRequest);
-app.post("/driverResponse", require("./login").onRequest);
-app.post("/repeatedDriverPost", require("./login").onRequest);
-app.post("/additionalDriverPost", require("./login").onRequest);
-app.post("/revertDriverRepeatedPost", require("./login").onRequest);
-app.post("/driverCancelRepeatedPost", require("./login").onRequest);
-app.post("/revertRepeatedCancellation", require("./login").onRequest);
-app.delete("/driverCancelSinglePost", require("./login").onRequest);
+app.post("/driverResponse", require("./driver_response").onRequest);
+app.post("/repeatedDriverPost", require("./driver_response").onRequest);
+app.post("/additionalDriverPost", require("./driver_response").onRequest);
+app.post("/revertDriverRepeatedPost", require("./driver_response").onRequest);
+app.post("/driverCancelRepeatedPost", require("./driver_response").onRequest);
+app.post("/revertRepeatedCancellation", require("./driver_response").onRequest);
+app.delete("/driverCancelSinglePost", require("./driver_response").onRequest);
 
 exports.respond = function (res, code, body) {
     res.writeHead(code, { "Content-Type": "text/html" });
