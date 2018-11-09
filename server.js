@@ -57,20 +57,6 @@ exports.respond = function (res, code, body) {
 }
 
 /**
- * Checks if a session is valid
- * @param userId {string} The user id
- * @param session {string} The session
- * @param func {function} The callback, function(bool success)
- */
-exports.checkSession = function (userId, session, func) {
-    exports.database.query("user", { "_id": exports.stringToID(userId) }, function (err, results) {
-        var user = results[0];
-        var time = new Date().getTime();
-        func(time < user.expire && user.session == session);
-    });
-}
-
-/**
  * Gets a record's id
  * @param data {Object} A record from database
  * @returns {string} The string of the id of the record
