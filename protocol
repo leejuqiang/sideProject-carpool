@@ -11,7 +11,7 @@ repeatedapplication: userID: string, driverPostID: [string], day: string, time: 
 additionalapplication: userID: string, driverPostID: [string], status:number, passengerNumber: number
 
 Protocol:
-response body: {error: number}
+response body: {error: {code: number, error: string}}
 request body: {sessionID: string(except login), userID: string}
 
 -----FOR ALL USERS-----

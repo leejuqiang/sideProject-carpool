@@ -12,6 +12,30 @@ exports.connect = function (func) {
 }
 
 /**
+ * Insets a record to database
+ * @param collectionName {string} The name of the collection
+ * @param data {Object} The record
+ * @param func {function} Callback. function(err, int insertedCount)
+ */
+exports.insert = function (collectionName, data, func) {
+    dbCarpool.collection(collectionName).insert(data, function (err, res) {
+        func(err, res.insertedCount);
+    });
+}
+
+/**
+ * Insets some records to database
+ * @param collectionName {string} The name of the collection
+ * @param data {array} The records
+ * @param func {function} Callback. function(err, int insertedCount)
+ */
+exports.insertMany = function (collectionName, data, func) {
+    dbCarpool.collection(collectionName).insertMany(data, function (err, res) {
+        func(err, res.insertedCount);
+    });
+}
+
+/**
  * Queries data from a collection
  * @param collectionName {string} The name of the collection
  * @param query {Object} The query object for mongodb
@@ -50,17 +74,75 @@ exports.getUser = function (userId, session, func) {
 /**
  * Gets the user's driver calender information
  * @param user {Object} The user got from getUser
- * @param func {function} The callback. function(string error), if error is null, user["post"] will include all the information of the user
+ * @param func {function} The callback. function(string error), if error is null, user["post"] will include all the information of the user,
+ * User.post: {repeatedPost: [], addPost: [], cancel: []}
  */
 exports.getUserDriverInfo = function (user, func) {
-
+    var id = server.getIdString(user);
+    exports.query("driverrepeatedpost", { "userID": id }, function (err, posts) {
+        if (err != null) {
+            func(err);
+            return;
+        }
+        user["post"] = {};
+        user.post["repeatedPost"] = posts;
+        exports.query("driveradditionalpost", { "userID": id }, function (err, adPosts) {
+            if (err != null) {
+                func(err);
+                return;
+            }
+            user.post["addPost"] = adPosts;
+            exports.query("drivercanceledpost", { "userID": id }, function (err, cancels) {
+                if (err != null) {
+                    func(err);
+                    return;
+                }
+                user.post["cancel"] = cancels;
+                func(null);
+            });
+        });
+    });
 }
 
 /**
  * Gets the user's passenger calender information
  * @param user {Object} The user got from getUser
  * @param func {function} The callback. function(string error), if error is null, user["application"] will include all the information of the user
+ * user.application: {apps: [], addApps: []}
  */
 exports.getUserPassengerInfo = function (user, func) {
+    var id = server.getIdString(user);
+    exports.query("repeatedapplication", { "userID": id }, function (err, apps) {
+        if (err != null) {
+            func(err);
+            return;
+        }
+        user["application"] = {};
+        user.application["apps"] = apps;
+        exports.query("additionalapplication", { "userID": id }, function (err, adApps) {
+            if (err != null) {
+                func(err);
+                return;
+            }
+            user.application["addApps"] = adApps;
+            func(null);
+        });
+    });
+}
 
+/**
+ * Searchs all post within a range
+ * @param collectionName {string} The collection name
+ * @param lat {number} The latitude
+ * @param long {number} The longitude
+ * @param range {number} The range
+ * @param func {function} The callback. function(error, array result)
+ */
+exports.getPostInRange = function (collectionName, lat, long, range, func) {
+    var minLat = lat - range;
+    var maxLat = lat + range;
+    var minLong = long - range;
+    var maxLong = long + range;
+    var query = { "lat": { "$gt": minLat, "$lt": maxLat }, "long": { "$gt": minLong, "$lt": maxLong } };
+    exports.query(collectionName, query, func);
 }

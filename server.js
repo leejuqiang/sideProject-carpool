@@ -11,6 +11,7 @@ app.use(moduleBodyParser.json({ "limit": "2mb" }));
 app.use(moduleBodyParser.urlencoded({ "extended": true }));
 
 exports.config = JSON.parse(moduleFs.readFileSync("./config.json"));
+exports.errorCode = require("./errorCode");
 
 moduleLog.configure({
     "appenders": {
@@ -41,19 +42,29 @@ app.post("/revertDriverRepeatedPost", require("./driver_response").onRequest);
 app.post("/driverCancelRepeatedPost", require("./driver_response").onRequest);
 app.post("/revertRepeatedCancellation", require("./driver_response").onRequest);
 app.delete("/driverCancelSinglePost", require("./driver_response").onRequest);
+app.post("/refresh", require("./refreshData").onRequest);
 
 app.get("/test", require("./test").onRequest);
 
 /**
- * Call this function to respond to client
+ * Call this function to respond to client with a http code
  * @param res {Object} The res from onRequest
  * @param code {number} The http response code
  * @param body {string} The response body
  */
-exports.respond = function (res, code, body) {
+exports.respondWithCode = function (res, code, body) {
     res.writeHead(code, { "Content-Type": "text/html" });
     res.write(body);
     return res.end();
+}
+
+/**
+ * Call this function to respond to client with http code 200
+ * @param res {Object} The res from onRequest
+ * @param body {string} The response body
+ */
+exports.respond = function (res, body) {
+    return exports.respondWithCode(res, 200, body);
 }
 
 /**
