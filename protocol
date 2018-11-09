@@ -70,7 +70,7 @@ driverResponse: POST /driverResponse
 client to server: sessionID: string, userID: string, applicationID: string, status: number
 server to client: 
 
-repeatedDriverPost: POST /repeateddriverPost
+repeatedDriverPost: POST /repeatedDriverPost
 client to server: sessionID: string, userID: string, lat: number, long: number, time: [[string], [string]], seatNumber: number, semester: string
 server to client:
 
