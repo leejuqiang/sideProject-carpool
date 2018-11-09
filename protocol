@@ -14,6 +14,8 @@ Protocol:
 response body: {error: number}
 request body: {sessionID: string(except login), userID: string}
 
+-----FOR ALL USERS-----
+
 login: POST /login
 client to server: userID: string, password: string
 server to client: userID: string, sessionID: string, name: string, error: number
@@ -22,30 +24,47 @@ refresh: POST /refresh
 client to server: sessionID: string, userID: string
 server to client: repeatedPost:[], additionalPost:[], cancellationPost:[], repeatedApplication:[], additionalApplication:[]
 
+
+-----FOR PASSENGER------
+
 repeatedPanel: POST /repeatedPanel
 client to server: sessionID: string, userID: string, semester: string, lat: number, long: number, range: number, passengerNumber: number
 server to client: availableSeats:[ day:[driver number for each time], day:[]]
 example: [[], [[1, 3, 4, 2, ], ....[]]
+//passenger request driver repeated post data (filter only posts within range to specified location, and specified semester and specified passenger number)
         
 singlePanel: POST /singlePanel
 client to server: sessionID: string, userID: string, startDate: string, endDate: string, lat: number, long: number, range: number, passengerNumber: number
 server to client: availableSeats: {date: [driver number for each time]}
+//passenger request driver single post data
 
 repeatedDriverList: POST /repeatedDriverList
 client to server: sessionID: string, userID: string, day: number, time: string, lat: number, long: number, range: number, passengerNumber: number
 server to client: user:[{userID:string, name: string, availableSeats: number, lat: number, long: number, postID: string} {}]
+//passenger click on a time block, show all posts at that time
 
 singleDriverList: POST /singleDriverList
 client to server: sessionID: string, userID: string, date: string, time: string, lat: number, long: number, range: number, passengerNumber: number
 server to client: user: [{userID:string, name: string, availableSeats: number, postID: string}]
+//passenger click on a time block, show all posts at that time
 
 repeatedApply: POST /repeatedApply
 client to server: sessionID: string, userID: string, application: [{day:string, time: string, postID:[if empty, select all]}, {}]
 server to client: result:[{applicationID:string, postID: string, status: number}]
+//passendger click on a post or a time block, make an application associated with the post or time block
 
 singleApply: POST /singleApply
 client to server: sessionID: string, userID: string, application: [{date: string, time: string, postID:[]}, {}]
 server to client: result: [{applicationID: string, postID: string, status: number}]
+//passendger click on a post or a time block, make an application associated with the post or time block
+
+
+withdrawApplication: POST /withdrawApplication
+client to server: applicationID: string
+server to client:
+
+
+-----FOR DRIVER-------
 
 driverResponse: POST /driverResponse
 client to server: sessionID: string, userID: string, applicationID: string, status: number
@@ -73,8 +92,4 @@ server to client:
 
 revertRepeatedCancellation: POST /revertRepeatedCancellation
 client to server: postID: string
-server to client:
-
-withdrawApplication: POST /withdrawApplication
-client to server: applicationID: string
 server to client:
