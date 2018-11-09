@@ -42,6 +42,8 @@ app.post("/driverCancelRepeatedPost", require("./driver_response").onRequest);
 app.post("/revertRepeatedCancellation", require("./driver_response").onRequest);
 app.delete("/driverCancelSinglePost", require("./driver_response").onRequest);
 
+app.get("/test", require("./test").onRequest);
+
 /**
  * Call this function to respond to client
  * @param res {Object} The res from onRequest
