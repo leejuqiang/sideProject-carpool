@@ -1,2 +1,3 @@
 
-mongoDB startup port number: 8081
+mongoDB startup port number: 27000
+server startup port number: 8081
