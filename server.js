@@ -3,6 +3,7 @@ var moduleFs = require("fs");
 var moduleLog = require("log4js");
 var moduleExpress = require("express");
 var moduleBodyParser = require("body-parser");
+var ObjectID = require("mongodb").ObjectID;
 
 var app = moduleExpress();
 app.use(moduleExpress.static("frontEnd"));
@@ -41,15 +42,54 @@ app.post("/driverCancelRepeatedPost", require("./login").onRequest);
 app.post("/revertRepeatedCancellation", require("./login").onRequest);
 app.delete("/driverCancelSinglePost", require("./login").onRequest);
 
+/**
+ * Call this function to respond to client
+ * @param res {Object} The res from onRequest
+ * @param code {number} The http response code
+ * @param body {string} The response body
+ */
 exports.respond = function (res, code, body) {
     res.writeHead(code, { "Content-Type": "text/html" });
     res.write(body);
     return res.end();
 }
 
-require("./database").connect(onConnectDB);
+/**
+ * Checks if a session is valid
+ * @param userId {string} The user id
+ * @param session {string} The session
+ * @param func {function} The callback, function(bool success)
+ */
+exports.checkSession = function (userId, session, func) {
+    exports.database.query("user", { "_id": exports.stringToID(userId) }, function (err, results) {
+        var user = results[0];
+        var time = new Date().getTime();
+        func(time < user.expire && user.session == session);
+    });
+}
 
-function onConnectDB(error, db) {
+/**
+ * Gets a record's id
+ * @param data {Object} A record from database
+ * @returns {string} The string of the id of the record
+ */
+exports.getIdString = function (data) {
+    return data["_id"].toString();
+}
+
+/**
+ * Changes a string to a id in database
+ * @param id {string} The id
+ * @returns {ObjectID} The id used in mongodb
+ */
+exports.stringToID = function (id) {
+    return ObjectID(id);
+}
+
+exports.database = require("./database");
+exports.database.connect(onConnectDB);
+
+function onConnectDB(error) {
     if (error === null) {
         exports.logger.info("connected db, starting server");
         moduleHttps.createServer(options, app).listen(exports.config.serverPort);
