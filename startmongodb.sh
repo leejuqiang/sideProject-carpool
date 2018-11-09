@@ -1,1 +1,0 @@
-~/MyProjects/CarPoolProject/mongodb-osx-x86_64-4.0.3/bin/mongod --dbpath ~/MyProjects/CarPoolProject/mongodatabase --port 8081
