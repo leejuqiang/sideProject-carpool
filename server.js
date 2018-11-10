@@ -35,13 +35,18 @@ exports.logger = moduleLog.getLogger("default");
 const options = { "key": moduleFs.readFileSync("./privatekey.pem"), "cert": moduleFs.readFileSync("cert.pem") };
 
 app.post("/login", require("./login").onRequest);
-app.post("/driverResponse", require("./driver_response").onRequest);
-app.post("/repeatedDriverPost", require("./driver_response").onRequest);
-app.post("/additionalDriverPost", require("./driver_response").onRequest);
-app.post("/revertDriverRepeatedPost", require("./driver_response").onRequest);
-app.post("/driverCancelRepeatedPost", require("./driver_response").onRequest);
-app.post("/revertRepeatedCancellation", require("./driver_response").onRequest);
-app.delete("/driverCancelSinglePost", require("./driver_response").onRequest);
+
+//driver part
+app.get("/driverPanel", require("./driverPanel").onRequest);
+app.post("/driverResponse", require("./driverResponse").onRequest);
+app.post("/repeatedDriverPost", require("./repeatedDriverPost").onRequest);
+app.post("/additionalDriverPost", require("./additionalDriverPost").onRequest);
+app.post("/revertDriverRepeatedPost", require("./revertDriverRepeatedPost").onRequest);
+app.post("/driverCancelRepeatedPost", require("./driverCancelRepeatedPost").onRequest);
+app.post("/revertRepeatedCancellation", require("./revertRepeatedCancellation").onRequest);
+app.delete("/driverCancelSinglePost", require("./driverCancelSinglePost").onRequest);
+
+
 app.post("/refresh", require("./refreshData").onRequest);
 
 app.get("/test", require("./test").onRequest);
