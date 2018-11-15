@@ -1,0 +1,14 @@
+.textColorInfo {
+    color: #64e7f8; 
+}
+
+.borderColorInfo {
+    border-bottom-color: #64e7f8;
+    border-top-color: #64e7f8;
+    border-right-color: #64e7f8;
+    border-left-color: #64e7f8;
+}
+
+.backgroundColorInfo {
+    background-color: #64e7f8;
+}
