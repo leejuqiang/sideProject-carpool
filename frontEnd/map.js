@@ -6,6 +6,23 @@ var locations = [];
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var markerCluster;
 
+
+//call this method to add a new marker on the map
+function addNewLocationToMarker(latitude, longitude){
+	locations.push({ lat: latitude, lng: longitude });
+	refreshMatchedMarkers();
+}
+
+//return the location where user specified or current position determined by GPS by default
+//return an object {lat: number, lng: number}
+function getSelectedLocation(){
+	var latlng = markers[0].getPosition();
+	return {
+		lat:latlng.lat(),
+		lng:latlng.lng()
+	}
+}
+
 function refreshMatchedMarkers() {
   // locations.forEach(function(location){console.log(location)});
 	var matchedMarkers = locations.map(function(location, i) {
