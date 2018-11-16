@@ -4,23 +4,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/login.css" />
+    <link rel="stylesheet" type="text/css" href="css/color.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script src="login.js"></script>
 </head>
 
 <body>
-    <div class="container-fluid">
+    <div>
         <span id="login_error" class="badge badge-danger" style="display: none;">Incorrect user name or password</span>
-        <div class="form-group">
-            <label for="userName">User name:</label>
-            <input type="text" class="form-control" id="userName" />
+        <div>
+            <p class="inputLabel textColorInfo">User name:</p>
+            <input type="text" class="input borderColorInfo" id="userName" />
         </div>
-        <div class="form-group">
-            <label for="pass">Password:</label>
-            <input type="password" class="form-control" id="pass" />
+        <div>
+            <p class="inputLabel textColorInfo">Password:</p>
+            <input type="password" class="input borderColorInfo" id="pass" />
         </div>
         <button class="btn btn-primary" onclick="onLogin()">Login</button>
     </div>
