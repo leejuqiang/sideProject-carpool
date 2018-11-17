@@ -1,5 +1,9 @@
 .textColorInfo {
-    color: #64e7f8; 
+    color: black; 
+}
+
+.textColorSuccess {
+    color: rgb(255, 255, 255);
 }
 
 .borderColorInfo {
@@ -11,4 +15,17 @@
 
 .backgroundColorInfo {
     background-color: #64e7f8;
+}
+
+.backgroundColorError {
+    background-color: rgb(243, 136, 136);
+}
+
+.backgroundColorSuccess {
+    background-color: rgb(139, 223, 139);
+}
+
+.header {
+    height: 80px;
+    background-color: aliceblue;
 }

@@ -11,17 +11,17 @@
 </head>
 
 <body>
+    <div class="header"></div>
+    <div class="emptyLine"></div>
     <div>
         <span id="login_error" class="badge badge-danger" style="display: none;">Incorrect user name or password</span>
         <div>
-            <p class="inputLabel textColorInfo">User name:</p>
-            <input type="text" class="input borderColorInfo" id="userName" />
+            <input type="text" class="input borderColorInfo" id="userName" placeholder="User Name" />
         </div>
         <div>
-            <p class="inputLabel textColorInfo">Password:</p>
-            <input type="password" class="input borderColorInfo" id="pass" />
+            <input type="password" class="input borderColorInfo" id="pass" placeholder="Password" />
         </div>
-        <button class="btn btn-primary" onclick="onLogin()">Login</button>
+        <a class="loginBtn textColorSuccess backgroundColorSuccess" onclick="onClickLogin()">Login</a>
     </div>
 </body>
 
