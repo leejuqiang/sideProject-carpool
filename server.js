@@ -66,10 +66,10 @@ exports.respondWithCode = function (res, code, body) {
 /**
  * Call this function to respond to client with http code 200
  * @param res {Object} The res from onRequest
- * @param body {string} The response body
+ * @param body {Object} The response json object
  */
 exports.respond = function (res, body) {
-    return exports.respondWithCode(res, 200, body);
+    return exports.respondWithCode(res, 200, JSON.stringify(body));
 }
 
 /**

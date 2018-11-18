@@ -1,5 +1,5 @@
 Data structure:
-user: name:string, password:string, sessionID:string, expire:number(time stamp)
+user: loginName:string, name:string, password:string, sessionID:string, expire:number(time stamp)
 
 driverrepeatedpost: userID: string, lat: number, long: number, availableSeats: [[], []], time: [[], []], maxSeats: number, semester:string
 example: {userID: "sdf"}
@@ -17,8 +17,8 @@ request body: {sessionID: string(except login), userID: string}
 -----FOR ALL USERS-----
 
 login: POST /login
-client to server: userID: string, password: string
-server to client: userID: string, sessionID: string, name: string, error: number
+client to server: userId: string, password: string
+server to client: userID: string, sessionID: string, name: string
 
 refresh: POST /refresh
 client to server: sessionID: string, userID: string

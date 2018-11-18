@@ -27,8 +27,8 @@ db.createCollection("drivercanceledpost")
 db.createCollection("repeatedapplication")
 db.createCollection("additionalapplication")
 
-db.user.insert({"name":"Li","password":"1234","sessionID":"1234567","expire":0})
-db.user.insert({"name":"Zun","password":"1234","sessionID":"12345678","expire":0})
+db.user.insert({"loginName":"li", "name":"Li","password":"1234","sessionID":"1234567","expire":0})
+db.user.insert({"loginName":"zun", "name":"Zun","password":"1234","sessionID":"12345678","expire":0})
 
 db.your_just_an_example.insert({ "_id" : 6, "semester" : 2, "grades" : [ 95, 90, 96 ] })
 
