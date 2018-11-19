@@ -16,10 +16,10 @@
     <div>
         <span id="login_error" class="badge badge-danger" style="display: none;">Incorrect user name or password</span>
         <div>
-            <input type="text" class="input borderColorInfo" id="userName" placeholder="User Name" />
+            <input type="text" class="input borderColorInfo" id="userName" placeholder="User Name" /><span id="userNameError">User name is empty</span>
         </div>
         <div>
-            <input type="password" class="input borderColorInfo" id="pass" placeholder="Password" />
+            <input type="password" class="input borderColorInfo" id="pass" placeholder="Password" /><span id="passwordError">Password is empty</span>
         </div>
         <a class="loginBtn textColorSuccess backgroundColorSuccess" onclick="onClickLogin()">Login</a>
     </div>
