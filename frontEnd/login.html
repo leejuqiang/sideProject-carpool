@@ -10,18 +10,22 @@
     <script src="login.js"></script>
 </head>
 
-<body>
+<body onload="onLoad()">
     <div class="header"></div>
-    <div class="emptyLine"><span class="textColorError error" id="error">Incorrect user name or password</span></div>
+    <div class>
+        <p class="title">Sign in with your user name</p>
+        <span class="textColorError error" id="error">Incorrect user name or password</span>
+    </div>
     <div>
-        <span id="login_error" class="badge badge-danger" style="display: none;">Incorrect user name or password</span>
         <div>
-            <input type="text" class="input borderColorInfo" id="userName" placeholder="User Name" /><span class="textColorError error" id="userNameError">User name is empty</span>
+            <input type="text" class="input borderColorInfo" id="userName" placeholder="User Name" /><span class="textColorError error"
+                id="userNameError">Please input user name</span>
         </div>
         <div>
-            <input type="password" class="input borderColorInfo" id="pass" placeholder="Password" /><span class="textColorError error" id="passwordError">Password is empty</span>
+            <input type="password" class="input borderColorInfo" id="pass" placeholder="Password" /><span class="textColorError error"
+                id="passwordError">Please input password</span>
         </div>
-        <a class="loginBtn textColorWhite backgroundColorSuccess" onclick="onClickLogin()">Login</a>
+        <a class="loginBtn textColorWhite backgroundColorSuccess" onclick="onClickLogin()">Sign in</a>
     </div>
 </body>
 

@@ -2,33 +2,39 @@ var userData = {};
 var days = ["Mon.", "Tue.", "Wed.", "Thu.", "Fri."];
 var runTimeData = { "days": [false, false, false, false, false], "selectedPost": -1 };
 
-function isLogin() {
-    var timeStamp = (new Date()).getTime();
-    var sessionTime = localStorage.getItem("sessionTime");
-    if (sessionTime != null) {
-        sessionTime = parseInt(sessionTime);
-        return timeStamp < sessionTime;
+function getUser() {
+    user = {"expire": 0};
+    user.isLogin = function(){
+        return Date.now() < user.expire;
     }
-    return false;
+    runTimeData.user = user;
+    var expire = localStorage.getItem("expire");
+    if (expire != null) {
+        user.expire = parseInt(expire);
+        user.name = localStorage.getItem("name");
+        user.userId = localStorage.getItem("userId");
+        user.session = localStorage.getItem("session");
+    }
 }
 
 function refreshData() {
-    if (!isLogin()) {
+    if (!runTimeData.user.isLogin()) {
         return;
     }
-    $.post("/refresh", { "sessionID": localStorage.getItem("sessionID"), "userName": localStorage.getItem("userName") }, function (data, s, xhr) {
-        // console.log(data);
-        userData = JSON.parse(data);
-        var refreshMatch = false;
-        refreshPostList();
-        refreshMatchList();
-        setTimeout(refreshData, 10000);
+    $.post("/refresh", { "sessionID": runTimeData.user.session, "userID": runTimeData.user.userId }, function (data, s, xhr) {
+        console.log(data);
+        // userData = JSON.parse(data);
+        // var refreshMatch = false;
+        // refreshPostList();
+        // refreshMatchList();
+        // setTimeout(refreshData, 10000);
     }).fail(function (xhr, error, s) {
-        setTimeout(refreshData, 10000);
+        // setTimeout(refreshData, 10000);
     });
 }
 
 function onLoad() {
+    getUser();
     var now = new Date();
     $("#driver").prop("checked", true);
     $("#number").val("1");
@@ -47,7 +53,7 @@ function onLoad() {
     dl.val(min);
     dl.prop("min", min);
     dl.prop("max", max);
-    refreshData();
+    // refreshData();
 }
 
 function onDayBtn(i) {
@@ -268,11 +274,12 @@ function createPostCell(post, node) {
 }
 
 function onLogin() {
-    if (isLogin()) {
+    if (runTimeData.user.isLogin()) {
         userData = {};
-        localStorage.removeItem("sessionID");
-        localStorage.removeItem("sessionTime");
-        localStorage.removeItem("userName");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("session");
+        localStorage.removeItem("expire");
+        localStorage.removeItem("name");
         location.reload();
     } else {
         window.location.href = "/login.html";

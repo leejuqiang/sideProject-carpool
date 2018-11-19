@@ -7,10 +7,20 @@ input.input {
     width: 80%;
     max-width: 500px;
     margin: auto;
+    padding-top: 10px;
     border-style: none none solid none;
     border-width: 2px;
-    
     display: block;
+}
+
+.title {
+    font-size: 20px;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+    margin: auto;
+    display: block;
+    padding: 20px;
 }
 
 .error {
@@ -19,8 +29,9 @@ input.input {
     margin: auto;
     width: 80%;
     max-width: 500px;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     opacity: 0;
+    visibility: hidden;
 }
 
 a.loginBtn {
@@ -35,6 +46,10 @@ a.loginBtn {
 }
 
 a.loginBtn:hover{
+    cursor: pointer;
+}
+
+a.loginBtn:active{
     box-shadow: 0px 0px 8px 2px rgba(128, 128, 128, 0.5)
 }
 
