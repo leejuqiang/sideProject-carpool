@@ -18,7 +18,7 @@ npm install mongodb
 insert data:
 use carpool             //switch to carpool
 show collections        //show all collections
-db.collection name.drop()  //make sure delete all collections created before
+db.your_collection_name.drop()  //make sure delete all collections created before
 
 db.createCollection("user")
 db.createCollection("driverrepeatedpost")
@@ -30,5 +30,5 @@ db.createCollection("additionalapplication")
 db.user.insert({"loginName":"li", "name":"Li","password":"1234","sessionID":"1234567","expire":0})
 db.user.insert({"loginName":"zun", "name":"Zun","password":"1234","sessionID":"12345678","expire":0})
 
-db.your_just_an_example.insert({ "_id" : 6, "semester" : 2, "grades" : [ 95, 90, 96 ] })
+db.your_just_an_example_user_with_array.insert({ "_id" : 6, "semester" : 2, "grades" : [ 95, 90, 96 ] })
 
