@@ -15,15 +15,20 @@
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
     </script>
     <style>
-            #map {
-            height: 50%;
-          }
-          /* Optional: Makes the sample page fill the window. */
-          html, body {
+        #map {
+            height: 100%;
+            width: 50%;
+        }
+        #table_container{
+            height: 100%;
+            width: 50%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-          }
+        }
     </style>
 
     <script>
@@ -75,7 +80,7 @@ function createRows() {
 }
 
 
-$(function () {
+$(document).ready(function () {
         var vm = new Vue({
         el: '#sheet',
         data: {
@@ -181,15 +186,9 @@ $(function () {
         </div>
     </header>
     <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Box"> -->
-            <div id="map" height="460px" width="100%"></div>
-   <div class="container">
-        <div class="row">
-            <div class="col-sm-8">
-                
-            </div>
-        
-            <div class="col-sm-4">
-                    <span class="glyphicon glyphicon-th-list"></span> panel
+            <div id="map"></div>
+   <div id="table_container">
+        <span class="glyphicon glyphicon-th-list"></span> panel
                     <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
                     <button id="cmd-post" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> Post</button>
                     <table id="sheet" class="table table-bordered">
@@ -204,8 +203,6 @@ $(function () {
                             </tr>
                         </tbody>
                     </table>
-            </div>
-        </div>
     </div>
 
     <footer style="background-color:#ddd; padding: 20px 0;">
