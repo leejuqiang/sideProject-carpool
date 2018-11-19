@@ -2,8 +2,16 @@
     color: black; 
 }
 
+.textColorWhite {
+    color: white;
+}
+
+.textColorError {
+    color: rgb(248, 95, 95);
+}
+
 .textColorSuccess {
-    color: rgb(255, 255, 255);
+    color: rgb(124, 255, 163);
 }
 
 .borderColorInfo {

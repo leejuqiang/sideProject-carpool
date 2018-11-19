@@ -12,16 +12,16 @@
 
 <body>
     <div class="header"></div>
-    <div class="emptyLine"></div>
+    <div class="emptyLine"><span class="textColorError error" id="error">Incorrect user name or password</span></div>
     <div>
         <span id="login_error" class="badge badge-danger" style="display: none;">Incorrect user name or password</span>
         <div>
-            <input type="text" class="input borderColorInfo" id="userName" placeholder="User Name" /><span id="userNameError">User name is empty</span>
+            <input type="text" class="input borderColorInfo" id="userName" placeholder="User Name" /><span class="textColorError error" id="userNameError">User name is empty</span>
         </div>
         <div>
-            <input type="password" class="input borderColorInfo" id="pass" placeholder="Password" /><span id="passwordError">Password is empty</span>
+            <input type="password" class="input borderColorInfo" id="pass" placeholder="Password" /><span class="textColorError error" id="passwordError">Password is empty</span>
         </div>
-        <a class="loginBtn textColorSuccess backgroundColorSuccess" onclick="onClickLogin()">Login</a>
+        <a class="loginBtn textColorWhite backgroundColorSuccess" onclick="onClickLogin()">Login</a>
     </div>
 </body>
 
