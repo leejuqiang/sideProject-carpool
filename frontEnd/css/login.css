@@ -9,8 +9,18 @@ input.input {
     margin: auto;
     border-style: none none solid none;
     border-width: 2px;
-    margin-bottom: 50px;
+    
     display: block;
+}
+
+.error {
+    font-size: 15px;
+    display: block;
+    margin: auto;
+    width: 80%;
+    max-width: 500px;
+    margin-bottom: 50px;
+    opacity: 0;
 }
 
 a.loginBtn {
@@ -29,5 +39,5 @@ a.loginBtn:hover{
 }
 
 .emptyLine{
-    height: 30px;
+    height: 50px;
 }
