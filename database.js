@@ -1,11 +1,11 @@
 var moduleMongo = require("mongodb").MongoClient;
 var server = require("./server");
-var dbCarpool;
+var mongoDB;
 
 exports.connect = function (func) {
-    moduleMongo.connect("mongodb://127.0.0.1:" + server.config.databasePort + "/carpool", function (err, db) {
+    moduleMongo.connect("mongodb://127.0.0.1:" + server.config.databasePort + "/carpool", { "poolSize": server.config.databasePoolSize }, function (err, db) {
         if (err === null) {
-            dbCarpool = db.db("carpool");
+            mongoDB = db;
             func(null);
         } else {
             server.logger.error("connect to db error: " + err);
@@ -15,13 +15,21 @@ exports.connect = function (func) {
 }
 
 /**
+ * Gets a connection to database
+ * @returns The db object
+ */
+function getDB() {
+    return mongoDB.db("carpool");
+}
+
+/**
  * Insets a record to database
  * @param collectionName {string} The name of the collection
  * @param data {Object} The record
  * @param func {function} Callback. function(errorCode err, int insertedCount)
  */
 exports.insert = function (collectionName, data, func) {
-    dbCarpool.collection(collectionName).insert(data, function (err, res) {
+    getDB().collection(collectionName).insert(data, function (err, res) {
         if (err === null) {
             func(null, res.insertedCount);
         } else {
@@ -38,7 +46,7 @@ exports.insert = function (collectionName, data, func) {
  * @param func {function} Callback. function(errorCode err, int insertedCount)
  */
 exports.insertMany = function (collectionName, data, func) {
-    dbCarpool.collection(collectionName).insertMany(data, function (err, res) {
+    getDB().collection(collectionName).insertMany(data, function (err, res) {
         if (err === null) {
             func(null, res.insertedCount);
         } else {
@@ -55,7 +63,7 @@ exports.insertMany = function (collectionName, data, func) {
  * @param func {function} The callback. function(errorCode error, array results)
  */
 exports.query = function (collectionName, query, func) {
-    dbCarpool.collection(collectionName).find(query).toArray(function (err, results) {
+    getDB().collection(collectionName).find(query).toArray(function (err, results) {
         if (err === null) {
             func(null, results);
         } else {
@@ -105,7 +113,7 @@ exports.loginUser = function (loginName, password, func) {
  * @param func {function} The callback. function(errorCode error, int updateNumber)
  */
 exports.update = function (collectionName, query, set, func) {
-    dbCarpool.collection(collectionName).updateOne(query, set, function (err, res) {
+    getDB().collection(collectionName).updateOne(query, set, function (err, res) {
         if (err !== null) {
             server.logger.error("update fail: " + err);
             func(server.errorCode.databaseError, 0);
