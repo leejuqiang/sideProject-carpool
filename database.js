@@ -187,6 +187,31 @@ exports.getUserDriverInfo = function (user, func) {
 }
 
 /**
+ * Gets the applications for the post of this user
+ * @param user {Object} The user
+ * @param postIds {array} The repeated post ids
+ * @param addPostIds {array} The addational post ids
+ * @param func {function} The callback. function(errorCode err), user.repeatAppForPost and user.addAppForPost will be attached to the user
+ */
+exports.getApplicationForUser = function (user, postIds, addPostIds, func) {
+    exports.query("repeatedapplication", { "driverPostID": { $in: postIds } }, function (err, results) {
+        if (err != null) {
+            func(err);
+        } else {
+            user["repeatAppForPost"] = results;
+            exports.query("additionalapplication", { "driverPostID": { $in: addPostIds } }, function (err, results) {
+                if (err != null) {
+                    func(err);
+                } else {
+                    user["addAppForPost"] = results;
+                    func(null);
+                }
+            })
+        }
+    });
+}
+
+/**
  * Gets the user's passenger calender information
  * @param user {Object} The user got from getUser
  * @param func {function} The callback. function(errorCode error), if error is null, user["application"] will include all the information of the user

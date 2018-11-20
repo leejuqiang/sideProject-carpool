@@ -22,7 +22,7 @@ server to client: userID: string, sessionID: string, name: string
 
 refresh: POST /refresh
 client to server: sessionID: string, userID: string
-server to client: repeatedPost:[], additionalPost:[], cancellationPost:[], repeatedApplication:[], additionalApplication:[]
+server to client: repeatedPost:[], additionalPost:[], cancellationPost:[], repeatedApplication:[], additionalApplication:[], repeatApplicationForPost:[], addApplicationForPost:[]
 
 
 -----FOR PASSENGER------
