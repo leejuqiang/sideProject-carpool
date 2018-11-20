@@ -12,9 +12,13 @@
     <script src="/static/js/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
     <script src="/map.js"></script>
-    
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
     <style>
-          
+          #map{
+            height: 600px;
+            width: 100%;
+          }
           /* Optional: Makes the sample page fill the window. */
           html, body {
             height: 100%;
@@ -180,7 +184,8 @@ $(function () {
 
     <div class="container">
         <div class="row">
-            <div class="col-sm-8">           
+            <div class="col-sm-8">    
+                <input id="pac-input" class="controls" type="text" placeholder="Search Box">       
                 <div id="map"></div>
             </div>
         
@@ -205,17 +210,14 @@ $(function () {
                     
             </div>
         </div>
-    </div>
+        <div class="row">
 
-    <footer style="background-color:#ddd; padding: 20px 0;">
-        <div class="container">
-            <p>
-                <a href="#">Contact Us</a>
-            </p>
-            <p>This application is created for CS601 side project</p>
         </div>
-    </footer>
-
+    </div>
+    
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdRxq9UR0bm3ORAE_GAxYyOrIzdwNQ0dw&libraries=places&callback=initMap">
+    </script>
     
 </body>
 
