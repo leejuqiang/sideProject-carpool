@@ -1,2 +1,2 @@
 runTimeData:{}
-runTimeData.user:{expire:int, name:string, userId:string, session: string, repeatedPost:[], additionalPost:[], cancellationPost:[], repeatedApplication:[], additionalApplication:[]}
+runTimeData.user:{expire:int, name:string, userId:string, session: string, repeatedPost:[], additionalPost:[], cancellationPost:[], repeatedApplication:[], additionalApplication:[], repeatApplicationForPost:[], addApplicationForPost:[]}

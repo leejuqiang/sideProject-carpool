@@ -3,8 +3,8 @@ var days = ["Mon.", "Tue.", "Wed.", "Thu.", "Fri."];
 var runTimeData = { "days": [false, false, false, false, false], "selectedPost": -1 };
 
 function getUser() {
-    user = {"expire": 0};
-    user.isLogin = function(){
+    user = { "expire": 0 };
+    user.isLogin = function () {
         return Date.now() < user.expire;
     }
     runTimeData.user = user;
@@ -23,13 +23,15 @@ function refreshData() {
     }
     $.post("/refresh", { "sessionID": runTimeData.user.session, "userID": runTimeData.user.userId }, function (data, s, xhr) {
         console.log(data);
-        // userData = JSON.parse(data);
-        // var refreshMatch = false;
-        // refreshPostList();
-        // refreshMatchList();
-        // setTimeout(refreshData, 10000);
+        var user = runTimeData.user;
+        user.repeatedPost = data.repeatedPost;
+        user.additionalPost = data.additionalPost;
+        user.cancellationPost = data.cancellationPost;
+        user.repeatedApplication = data.repeatedApplication;
+        user.additionalApplication = data.additionalApplication;
+        user.repeatApplicationForPost = data.repeatApplicationForPost;
+        user.addApplicationForPost = data.addApplicationForPost;
     }).fail(function (xhr, error, s) {
-        // setTimeout(refreshData, 10000);
     });
 }
 
