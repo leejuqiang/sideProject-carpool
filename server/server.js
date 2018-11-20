@@ -6,18 +6,18 @@ var moduleBodyParser = require("body-parser");
 var ObjectID = require("mongodb").ObjectID;
 
 var app = moduleExpress();
-app.use(moduleExpress.static("frontEnd"));
+app.use(moduleExpress.static("../frontEnd"));
 app.use(moduleBodyParser.json({ "limit": "2mb" }));
 app.use(moduleBodyParser.urlencoded({ "extended": true }));
 
-exports.config = JSON.parse(moduleFs.readFileSync("./config.json"));
+exports.config = JSON.parse(moduleFs.readFileSync("../config.json"));
 exports.errorCode = require("./errorCode");
 
 moduleLog.configure({
     "appenders": {
         "normal": {
             "type": "file",
-            "filename": "log/log.log"
+            "filename": "../log/log.log"
         },
         "console": {
             "type": "console"
@@ -32,7 +32,7 @@ moduleLog.configure({
 });
 exports.logger = moduleLog.getLogger("default");
 
-const options = { "key": moduleFs.readFileSync("./privatekey.pem"), "cert": moduleFs.readFileSync("cert.pem") };
+const options = { "key": moduleFs.readFileSync("../privatekey.pem"), "cert": moduleFs.readFileSync("../cert.pem") };
 
 app.post("/login", require("./login").onRequest);
 
