@@ -19,6 +19,8 @@ function getUser() {
 
 function refreshData() {
     if (!runTimeData.user.isLogin()) {
+        $("#loading").css({"display":"none"});
+        $("#main").css({"display":"block"});
         return;
     }
     $.post("/refresh", { "sessionID": runTimeData.user.session, "userID": runTimeData.user.userId }, function (data, s, xhr) {
@@ -31,31 +33,17 @@ function refreshData() {
         user.additionalApplication = data.additionalApplication;
         user.repeatApplicationForPost = data.repeatApplicationForPost;
         user.addApplicationForPost = data.addApplicationForPost;
+        $("#loading").css({"display":"none"});
+        $("#main").css({"display":"block"});
     }).fail(function (xhr, error, s) {
+        $("#loading").css({"display":"none"});
+        $("#main").css({"display":"block"});
     });
 }
 
 function onLoad() {
     getUser();
-    var now = new Date();
-    $("#driver").prop("checked", true);
-    $("#number").val("1");
-    onTypeChanged();
-    onNumberChanged();
-    var login = isLogin();
-    $("#login").text(login ? "Logout" : "Login");
-    if (login) {
-        $("#userLabel").text("Welcome " + localStorage.getItem("userName"));
-    }
-    appendTimeSelection(now);
-    var min = now.toISOString().substr(0, 10);
-    now.setMonth(now.getMonth() + 1);
-    var max = now.toISOString().substr(0, 10);
-    var dl = $("#date");
-    dl.val(min);
-    dl.prop("min", min);
-    dl.prop("max", max);
-    // refreshData();
+    refreshData();
 }
 
 function onDayBtn(i) {
