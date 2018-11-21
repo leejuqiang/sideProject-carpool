@@ -21,3 +21,29 @@ function onLogin() {
 function loginErrorFunction() {
     $("#login_error").show()
 }
+
+function isLogin() {
+    var timeStamp = (new Date()).getTime();
+    var sessionTime = localStorage.getItem("sessionTime");
+    if (sessionTime != null) {
+        sessionTime = parseInt(sessionTime);
+        return timeStamp < sessionTime;
+    }
+    return false;
+}
+
+function refreshData() {
+    if (!isLogin()) {
+        return;
+    }
+    $.post("/refresh", { "sessionID": localStorage.getItem("sessionID"), "userName": localStorage.getItem("userName") }, function (data, s, xhr) {
+        // console.log(data);
+        userData = JSON.parse(data);
+        var refreshMatch = false;
+        refreshPostList();
+        refreshMatchList();
+        setTimeout(refreshData, 10000);
+    }).fail(function (xhr, error, s) {
+        setTimeout(refreshData, 10000);
+    });
+}

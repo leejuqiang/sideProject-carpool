@@ -76,7 +76,7 @@ function createRows() {
 }
 
 
-$(function () {
+$(document).ready(function () {
         var vm = new Vue({
         el: '#sheet',
         data: {
@@ -138,6 +138,22 @@ $(function () {
         }
     };
 
+    $("#button1").click(function(){
+        $.post("refresh", 
+        {
+            sessionID: runTimeData.user["userId"],
+            userID: runTimeData.user["session"]
+        },
+        function(data,status){
+            $("#form1").html(data);
+            setTimeout(refreshData, 10000);
+        }).fail(function (xhr, error, s) {
+            setTimeout(refreshData, 10000);
+        });
+    });
+
+
+
     $('#cmd-refresh').click(function () {
         vm.refresh();
     });
@@ -167,20 +183,7 @@ $(function () {
 </head>
 
 <body>
-    <header class="navbar navbar-static-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a href="/" class="navbar-brand">Index</a>
-            </div>
-            <nav class="collapse navbar-collapse" id="bs-navbar">
-                <ul class="nav navbar-nav">
-                    <li><a target="_blank" href="/driverPage">Driver</a></li>
-                    <li><a target="_blank" href="#">Passenger</a></li>
-                    <li><a target="_blank" href="/profile">Profile</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+
 
     <div class="container">
         <div class="row">
@@ -211,11 +214,6 @@ $(function () {
             </div>
         </div>
         <div class="row">
-            <p>asin: <input type="text" id="textbox1"></input></p>
-            <button id="button1">Find asin</button>
-            
-            
-            <br/>
             <form id="form1"> </form>
         </div>
     </div>
