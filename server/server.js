@@ -17,7 +17,7 @@ moduleLog.configure({
     "appenders": {
         "normal": {
             "type": "file",
-            "filename": "../log/log.log"
+            "filename": "./log/log.log"
         },
         "console": {
             "type": "console"
