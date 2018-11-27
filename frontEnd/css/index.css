@@ -58,3 +58,10 @@ div.main {
     left: 60px;
     animation-delay: 0.6s;
 }
+
+.frame{
+    width: 100%;
+    border-style: none;
+    background-color: rgb(77, 106, 131);
+    height: 100%;
+}
