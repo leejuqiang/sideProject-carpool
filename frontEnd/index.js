@@ -19,8 +19,8 @@ function getUser() {
 
 function refreshData() {
     if (!runTimeData.user.isLogin()) {
-        $("#loading").css({"display":"none"});
-        $("#main").css({"display":"block"});
+        $("#loading").css({ "display": "none" });
+        $("#main").css({ "display": "block" });
         return;
     }
     $.post("/refresh", { "sessionID": runTimeData.user.session, "userID": runTimeData.user.userId }, function (data, s, xhr) {
@@ -33,15 +33,16 @@ function refreshData() {
         user.additionalApplication = data.additionalApplication;
         user.repeatApplicationForPost = data.repeatApplicationForPost;
         user.addApplicationForPost = data.addApplicationForPost;
-        $("#loading").css({"display":"none"});
-        $("#main").css({"display":"block"});
+        $("#loading").css({ "display": "none" });
+        $("#main").css({ "display": "block" });
     }).fail(function (xhr, error, s) {
-        $("#loading").css({"display":"none"});
-        $("#main").css({"display":"block"});
+        $("#loading").css({ "display": "none" });
+        $("#main").css({ "display": "block" });
     });
 }
 
 function onLoad() {
+    adjust();
     getUser();
     refreshData();
 }
