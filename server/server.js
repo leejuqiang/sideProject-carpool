@@ -46,6 +46,8 @@ app.post("/driverCancelRepeatedPost", require("./handle_driverCancelRepeatedPost
 app.post("/revertRepeatedCancellation", require("./handle_revertRepeatedCancellation").onRequest);
 app.delete("/driverCancelSinglePost", require("./handle_driverCancelSinglePost").onRequest);
 
+//passenger part
+app.get("/passengerPanel", require("./passengerPanel").onRequest);
 
 app.post("/refresh", require("./refreshData").onRequest);
 
