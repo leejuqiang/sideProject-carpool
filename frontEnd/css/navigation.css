@@ -7,7 +7,7 @@
 .l1 li a.on{ background:#333; color:#fff; }
 .l1 li .l2{position: absolute; top:40px;  left: -40px; list-style-type: none; display: none;}
 .l1 li .l2 li{float: none; padding:5px; background-color: #4393c9;}
-.l1 li .l2 li:hover{background: red;}
+/* .l1 li .l2 li:hover{background: red;} */
 .l1 li:hover .l2{display: block;}
 
 .header_right{ width:80px; height:250px; position: absolute; right:30px; text-align: center; 
