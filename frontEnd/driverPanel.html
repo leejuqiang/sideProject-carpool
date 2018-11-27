@@ -15,184 +15,243 @@
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 
     <style>
-          #map{
+        #map{
             height: 600px;
             width: 100%;
-          }
-          /* Optional: Makes the sample page fill the window. */
-          html, body {
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-          }
+        }
+
+        .tablink {
+            background-color: #555;
+            color: white;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            font-size: 17px;
+            width: 50%;
+        }
+
+        .tablink:hover {
+            background-color: #777;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .waitingColor {
+            color: rgb(240, 221, 50);
+        }
+        .confirmedColor {
+            color: rgb(16, 128, 6);
+        }
     </style>
 
     <script>
 
-var COLUMNS = 7;
+        var COLUMNS = 7;
 
-function createHeader() {
-    var hdr = [{
-        row: 0,
-        col: 0,
-        text: ''
-    }];
-    for (var i=1; i<=COLUMNS; i++) {
-        hdr.push({
-            row: 0,
-            col: i,
-            text: 'Day '+i
-        });
-    }
-    return hdr;
-}
-
-function createRow(rIndex) {
-    var row = [{
-        row: rIndex,
-        col: 0,
-        contentEditable: false,
-        text: '' + rIndex,
-        align: 'left'
-    }];
-    for (var i=1; i<=COLUMNS; i++) {
-        row.push({
-            row: rIndex,
-            col: i,
-            contentEditable: true,
-            text: '',
-            align: 'left'
-        });
-    }
-    return row;
-}
-
-function createRows() {
-    var rows = [];
-    for (var i=8; i<=20; i++) {
-        rows.push(createRow(i));
-    }
-    return rows;
-}
-
-
-$(document).ready(function () {
-        var vm = new Vue({
-        el: '#sheet',
-        data: {
-            header: createHeader(),
-            rows: createRows(),
-            selectedRowIndex: 0,
-            selectedColIndex: 0
-        },
-        methods: {
-            refresh: function () {
-                var that = this;
-                //request data from server
-                that.$resource('/refresh').get().then(function (resp) {
-                    resp.json().then(function (result) {
-                        alert("requested data from server:" + result.message)
-                        //TO DO: set data
-                    });
-                }, function (resp) {
-                    alert('Failed to load.');
+        function createHeader() {
+            var hdr = [{
+                row: 0,
+                col: 0,
+                text: ''
+            }];
+            for (var i = 1; i <= COLUMNS; i++) {
+                hdr.push({
+                    row: 0,
+                    col: i,
+                    text: 'Day ' + i
                 });
-            },
-            post: function () {
-                //post data to server
-                this.$resource('/apply' + ID).save({
-                    rows: this.rows
-                }).then(function (resp) {
-                    console.log('saved ok.');
-                }, function (resp) {
-                    alert('failed to save.');
-                });
-            },
-            focus: function (cell) {
-                this.selectedRowIndex = cell.row;
-                this.selectedColIndex = cell.col;
-            },
-            change: function (e) {
-                var
-                    rowIndex = this.selectedRowIndex,
-                    colIndex = this.selectedColIndex,
-                    text;
-                if (rowIndex > 0 && colIndex > 0) {
-                    text = e.target.innerText;
-                    this.rows[rowIndex - 1][colIndex].text = text;
-                }
             }
+            return hdr;
         }
-    });
-    window.vm = vm;
 
-    var setAlign = function (align) {
-        var
-            rowIndex = vm.selectedRowIndex,
-            colIndex = vm.selectedColIndex,
-            row, cell;
-        if (rowIndex > 0 && colIndex > 0) {
-            row = vm.rows[rowIndex - 1];
-            cell = row[colIndex];
-            cell.align = align;
+        function createRow(rIndex) {
+            var row = [{
+                row: rIndex,
+                col: 0,
+                contentEditable: false,
+                text: '' + rIndex,
+                align: 'left'
+            }];
+            for (var i = 1; i <= COLUMNS; i++) {
+                row.push({
+                    row: rIndex,
+                    col: i,
+                    contentEditable: true,
+                    text: '',
+                    align: 'left'
+                });
+            }
+            return row;
         }
-    };
 
-    $("#button1").click(function(){
-        $.post("refresh", 
-        {
-            sessionID: runTimeData.user["userId"],
-            userID: runTimeData.user["session"]
-        },
-        function(data,status){
-            $("#form1").html(data);
-            setTimeout(refreshData, 10000);
-        }).fail(function (xhr, error, s) {
-            setTimeout(refreshData, 10000);
+        function createRows() {
+            var rows = [];
+            for (var i = 8; i <= 20; i++) {
+                rows.push(createRow(i));
+            }
+            return rows;
+        }
+
+
+        $(document).ready(function () {
+            $("#defaultOpen").click();
+            var vm = new Vue({
+                el: '#sheet',
+                data: {
+                    header: createHeader(),
+                    rows: createRows(),
+                    selectedRowIndex: 0,
+                    selectedColIndex: 0
+                },
+                methods: {
+                    refresh: function () {
+                        var that = this;
+                        //request data from server
+                        that.$resource('/refresh').get().then(function (resp) {
+                            resp.json().then(function (result) {
+                                alert("requested data from server:" + result.message)
+                                //TO DO: set data
+                            });
+                        }, function (resp) {
+                            alert('Failed to load.');
+                        });
+                    },
+                    post: function () {
+                        //post data to server
+                        this.$resource('/apply' + ID).save({
+                            rows: this.rows
+                        }).then(function (resp) {
+                            console.log('saved ok.');
+                        }, function (resp) {
+                            alert('failed to save.');
+                        });
+                    },
+                    focus: function (cell) {
+                        this.selectedRowIndex = cell.row;
+                        this.selectedColIndex = cell.col;
+                    },
+                    change: function (e) {
+                        var
+                            rowIndex = this.selectedRowIndex,
+                            colIndex = this.selectedColIndex,
+                            text;
+                        if (rowIndex > 0 && colIndex > 0) {
+                            text = e.target.innerText;
+                            this.rows[rowIndex - 1][colIndex].text = text;
+                        }
+                    },
+                    changeColor: function (e) {
+                        var
+                            rowIndex = this.selectedRowIndex,
+                            colIndex = this.selectedColIndex;
+                        lc = getSelectedLocation();
+                        if (rowIndex > 0 && colIndex > 0) {
+                            addNewLocationToMarker(lc.lat, lc.lng);
+                            alert(lc.lat + " , " + lc.lng);
+                            e.target.waitingColor;
+                        }
+                    }
+                }
+            });
+            window.vm = vm;
+
+            var setAlign = function (align) {
+                var
+                    rowIndex = vm.selectedRowIndex,
+                    colIndex = vm.selectedColIndex,
+                    row, cell;
+                if (rowIndex > 0 && colIndex > 0) {
+                    row = vm.rows[rowIndex - 1];
+                    cell = row[colIndex];
+                    cell.align = align;
+                }
+            };
+
+            $("#button1").click(function () {
+                $.post("refresh",
+                    {
+                        sessionID: runTimeData.user["userId"],
+                        userID: runTimeData.user["session"]
+                    },
+                    function (data, status) {
+                        $("#form1").html(data);
+                        setTimeout(refreshData, 10000);
+                    }).fail(function (xhr, error, s) {
+                        setTimeout(refreshData, 10000);
+                    });
+            });
+
+
+
+            $('#cmd-refresh').click(function () {
+                vm.refresh();
+            });
+
+            $('#cmd-post').click(function () {
+                vm.post();
+            });
+
+            $('#cmd-left').click(function () {
+                setAlign('left');
+            });
+
+            $('#cmd-center').click(function () {
+                setAlign('center');
+            });
+
+            $('#cmd-right').click(function () {
+                setAlign('right');
+            });
+
+            $('#toolbar button').focus(function () {
+                $(this).blur();
+            });
         });
-    });
 
-
-
-    $('#cmd-refresh').click(function () {
-        vm.refresh();
-    });
-
-    $('#cmd-post').click(function () {
-        vm.post();
-    });
-
-    $('#cmd-left').click(function () {
-        setAlign('left');
-    });
-
-    $('#cmd-center').click(function () {
-        setAlign('center');
-    });
-
-    $('#cmd-right').click(function () {
-        setAlign('right');
-    });
-
-    $('#toolbar button').focus(function () {
-        $(this).blur();
-    });
-});
-
+        function openTab(tabEleID, elmnt) {
+            //TODO change into jquery
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+            }
+            document.getElementById(tabEleID).style.display = "block";
+            elmnt.style.backgroundColor = "grey";
+        }
     </script>
 </head>
 
 <body>
 
+    <button class="tablink" onclick="openTab('RepeatedPost', this)" id="defaultOpen">RepeatedPost</button>
+    <button class="tablink" onclick="openTab('SinglePost', this)">SinglePost</button>
+    <br />
+    <div id="RepeatedPost" class="tabcontent">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8">
+                    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                    <div id="map"></div>
+                </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-8">    
-                <input id="pac-input" class="controls" type="text" placeholder="Search Box">       
-                <div id="map"></div>
-            </div>
-        
-            <div class="col-sm-4">
+                <div class="col-sm-4">
 
                     <table id="sheet" class="table table-bordered">
                         <thead>
@@ -202,26 +261,36 @@ $(document).ready(function () {
                         </thead>
                         <tbody>
                             <tr v-for="tr in rows">
-                                <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="change" v-bind:contenteditable="cell.contentEditable" v-bind:style="{ textAlign: cell.align }" v-text="cell.text"></td>
+                                <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="changeColor" v-text="cell.text"></td>
                             </tr>
                         </tbody>
                     </table>
 
+
                     
-                    <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
-                    <button id="cmd-post" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> Post</button>
-                    
+                    <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i>
+                        Refresh</button>
+                    <button id="cmd-post" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i>
+                        Post</button>
+
+                </div>
+            </div>
+            <div class="row">
+                <form id="form1"> </form>
             </div>
         </div>
-        <div class="row">
-            <form id="form1"> </form>
-        </div>
     </div>
-    
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdRxq9UR0bm3ORAE_GAxYyOrIzdwNQ0dw&libraries=places&callback=initMap">
+
+    <div id="SinglePost" class="tabcontent">
+        <h1>SinglePost</h1>
+        <p>SinglePost is the capital of France.</p>
+    </div>
+
+
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdRxq9UR0bm3ORAE_GAxYyOrIzdwNQ0dw&libraries=places&callback=initMap">
     </script>
-    
+
 </body>
 
 </html>
