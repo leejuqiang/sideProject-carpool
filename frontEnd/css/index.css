@@ -1,13 +1,14 @@
-* {
-    box-sizing: border-box;
-}
-
 div.loading {
     margin: auto;
     width: 65px;
     height: 100px;
     position: relative;
     top: 200px;
+}
+
+.body{
+    margin: 0px;
+    padding: 0px;
 }
 
 div.main {
@@ -57,4 +58,12 @@ div.main {
     background-color: rgb(226, 64, 24);
     left: 60px;
     animation-delay: 0.6s;
+}
+
+.frame{
+    width: 100%;
+    border-style: none;
+    background-color: rgb(77, 106, 131);
+    padding: 0px;
+    margin: 0px;
 }
