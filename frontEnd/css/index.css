@@ -1,13 +1,14 @@
-* {
-    box-sizing: border-box;
-}
-
 div.loading {
     margin: auto;
     width: 65px;
     height: 100px;
     position: relative;
     top: 200px;
+}
+
+.body{
+    margin: 0px;
+    padding: 0px;
 }
 
 div.main {
@@ -63,5 +64,6 @@ div.main {
     width: 100%;
     border-style: none;
     background-color: rgb(77, 106, 131);
-    height: 100%;
+    padding: 0px;
+    margin: 0px;
 }
