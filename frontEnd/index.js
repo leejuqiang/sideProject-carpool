@@ -45,6 +45,7 @@ function onLoad() {
     adjust();
     getUser();
     refreshData();
+    showIframe("home.html");
 }
 
 function onDayBtn(i) {
