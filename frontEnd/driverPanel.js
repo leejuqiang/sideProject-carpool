@@ -33,11 +33,7 @@ function isLogin() {
 }
 
 function refreshData() {
-    if (!isLogin()) {
-        return;
-    }
     $.post("/refresh", { "sessionID": localStorage.getItem("sessionID"), "userName": localStorage.getItem("userName") }, function (data, s, xhr) {
-        // console.log(data);
         userData = JSON.parse(data);
         var refreshMatch = false;
         refreshPostList();

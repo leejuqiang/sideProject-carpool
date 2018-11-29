@@ -55,6 +55,25 @@
         .confirmedColor {
             color: rgb(16, 128, 6);
         }
+
+        .subchoicebtn {
+            overflow: hidden;
+            background-color: rgb(240, 232, 232); 
+        }
+
+        .subchoice-content {
+            display: none;
+            position: absolute;
+            background-color: rgb(90, 83, 83);
+            left: 0;
+            width: 70%;
+            z-index: 1;
+        }
+        
+        .subchoice:hover .subchoice-content  {
+            background-color: rgb(235, 232, 232);
+            display: block;
+        }
     </style>
 
     <script>
@@ -81,7 +100,7 @@
             var row = [{
                 row: rIndex,
                 col: 0,
-                contentEditable: false,
+                contentEditable: true,
                 text: '' + rIndex,
                 align: 'left'
             }];
@@ -118,16 +137,18 @@
                 },
                 methods: {
                     refresh: function () {
-                        var that = this;
-                        //request data from server
-                        that.$resource('/refresh').get().then(function (resp) {
-                            resp.json().then(function (result) {
-                                alert("requested data from server:" + result.message)
-                                //TO DO: set data
-                            });
-                        }, function (resp) {
-                            alert('Failed to load.');
-                        });
+                        runTimeData.user.repeatedPost;
+                        additionalPost;
+                        cancellationPost;
+                        repeatApplicationForPost;
+                        addApplicationForPost;
+                        
+                        //set rows
+                        for (var rowIndex = 8; rowIndex <= 20; rowIndex++) {
+                            for(var colIndex = 1; colIndex <= COLUMNS; colIndex++){
+                                this.rows[rowIndex][colIndex].text = "has";
+                            }
+                        }
                     },
                     post: function () {
                         //post data to server
@@ -180,23 +201,10 @@
                 }
             };
 
-            $("#button1").click(function () {
-                $.post("refresh",
-                    {
-                        sessionID: runTimeData.user["userId"],
-                        userID: runTimeData.user["session"]
-                    },
-                    function (data, status) {
-                        $("#form1").html(data);
-                        setTimeout(refreshData, 10000);
-                    }).fail(function (xhr, error, s) {
-                        setTimeout(refreshData, 10000);
-                    });
-            });
-
 
 
             $('#cmd-refresh').click(function () {
+                refreshData();
                 vm.refresh();
             });
 
@@ -238,7 +246,7 @@
     </script>
 </head>
 
-<body>
+<body onload="refreshData()">
 
     <button class="tablink" onclick="openTab('RepeatedPost', this)" id="defaultOpen">RepeatedPost</button>
     <button class="tablink" onclick="openTab('SinglePost', this)">SinglePost</button>
@@ -266,11 +274,18 @@
                         </tbody>
                     </table>
 
-
-                    
-                    <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i>
+                    <div class="tripchoice">
+                        <div class="subchoice">
+                            <button class="subchoicebtn">To Campus/From Campus</button>
+                            <div class="subchoice-content">
+                                <div id="to_campus">To Campus</div>
+                                <div id="from_campus">From Campus</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="cmd-refresh" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
                         Refresh</button>
-                    <button id="cmd-post" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i>
+                    <button id="cmd-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                         Post</button>
 
                 </div>
