@@ -9,7 +9,7 @@ exports.onRequest = function (req, res) {
                     server.database.getUserPassengerInfo(user, function (error) {
                         if (error === null) {
                             var postIds = [];
-                            for (var app in user.post.repeatedApplication) {
+                            for (var app in user.post.repeatedPost) {
                                 postIds.push(app._id);
                             }
                             var addPostIds = [];

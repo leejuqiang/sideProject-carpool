@@ -4,3 +4,33 @@
     background-color: aqua;
     position: absolute;
 }
+
+.tImage {
+    width: 200px;
+    height: 200px;
+}
+
+div.center{
+    margin: auto;
+    display: block;
+    clear: both;
+}
+
+.tLeft {
+    margin-right: 0;
+    margin-left: 100px;
+    padding: 30px;
+    float: left;
+}
+
+.tRight{
+    margin-left: 0px;
+    margin-right: 100px;
+    float: right;
+    padding: 30px;
+}
+
+.tText {
+    width: 200px;
+    height: 200px;
+}
