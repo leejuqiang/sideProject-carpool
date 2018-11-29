@@ -31,12 +31,9 @@ function adjust() {
                         + "</div>";
         }
         var iframe = document.getElementById("frame");
-                var bHeight = iframe.contentWindow.document.body.scrollHeight;
-                var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
-                var height = Math.max(bHeight, dHeight);
-                iframe.height = height;
-                console.log(height);
-        
+        var bHeight = iframe.contentWindow.document.body.scrollHeight;
+        iframe.height = bHeight;
+        console.log(bHeight);
 }
 
 function showIframe(page) {
@@ -47,22 +44,21 @@ function showIframe(page) {
                 var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
                 var height = Math.max(bHeight, dHeight);
                 iframe.height = height;
-                console.log(height);
         }
         iframe.src = page;
 }
 
 
-function userStatus(status){
+function userStatus(status) {
         var statusInfo = document.getElementById("statusinfo");
-        
-        if(status){
+
+        if (status) {
                 statusInfo.innerHTML = "Login";
                 // status.href = "login.html";
         }
-        else{
+        else {
                 statusInfo.innerHTML = "Logout";
                 // status.href = "home.html";
         }
-        
+
 }

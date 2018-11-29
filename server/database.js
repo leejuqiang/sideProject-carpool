@@ -139,7 +139,7 @@ exports.getUser = function (userId, session, func) {
                 return;
             }
             var user = result[0];
-            if (session != null && user.session != session) {
+            if (session != null && user.sessionID != session) {
                 func(null, server.errorCode.sessionInvalid);
             } else {
                 var time = Date.now();
