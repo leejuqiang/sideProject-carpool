@@ -129,6 +129,8 @@
 
         $(document).ready(function () {
             $("#defaultOpen").click();
+            var
+                lc, date_and_day, direcction;
             var vm = new Vue({
                 el: '#sheet',
                 data: {
@@ -224,15 +226,20 @@
 
             $('#cmd-post-2').click(function () {
                 vm.post();
+                //TODO changed post path
                 $.post("reviewsearch",
                     {
                         date: $("#date_and_day").val()
                     },
-                    function (data, status) {
-                        $("#form1").html(data);
+                    function (status) {
+                        $(".status").text(status);
                     }
                 );
             });
+
+            $('.to_campus').click(
+                
+            )
 
             $('#cmd-left').click(function () {
                 setAlign('left');
@@ -304,16 +311,17 @@
                     <div class="subchoice">
                         <button class="subchoicebtn">To Campus/From Campus</button>
                         <div class="subchoice-content">
-                            <div id="to_campus">To Campus</div>
-                            <div id="from_campus">From Campus</div>
+                            <div class="to_campus">To Campus</div>
+                            <div class="from_campus">From Campus</div>
                         </div>
                     </div>
                 </div>
-                <button id="cmd-refresh-1" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
+                <button id="cmd-refresh-1" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
+                        class="glyphicon glyphicon-refresh"></i>
                     Refresh</button>
                 <button id="cmd-post-1" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                     Post</button>
-
+                <div class="status"> </div>
             </div>
 
             <div id="SinglePost" class="tabcontent col-sm-4">
@@ -324,16 +332,17 @@
                     <div class="subchoice">
                         <button class="subchoicebtn">To Campus/From Campus</button>
                         <div class="subchoice-content">
-                            <div id="to_campus">To Campus</div>
-                            <div id="from_campus">From Campus</div>
+                            <div class="to_campus">To Campus</div>
+                            <div class="from_campus">From Campus</div>
                         </div>
                     </div>
                 </div>
-                <button id="cmd-refresh-2" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
+                <button id="cmd-refresh-2" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
+                        class="glyphicon glyphicon-refresh"></i>
                     Refresh</button>
                 <button id="cmd-post-2" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                     Post</button>
-
+                <div class="status"> </div>
             </div>
 
 
