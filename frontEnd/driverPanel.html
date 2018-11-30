@@ -12,6 +12,8 @@
     <script src="/static/js/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
     <script src="/map.js"></script>
+    <script src="/index.js"></script>
+    <script src="/driverPanel.js"></script>
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 
     <style>
@@ -203,13 +205,33 @@
 
 
 
-            $('#cmd-refresh').click(function () {
+            $('.cmd-refresh-btn').click(function () {
                 refreshData();
                 vm.refresh();
             });
 
-            $('#cmd-post').click(function () {
+            $('#cmd-post-1').click(function () {
                 vm.post();
+                $.post("reviewsearch",
+                    {
+                        date: $("#textbox1").val()
+                    },
+                    function (data, status) {
+                        $("#form1").html(data);
+                    }
+                );
+            });
+
+            $('#cmd-post-2').click(function () {
+                vm.post();
+                $.post("reviewsearch",
+                    {
+                        date: $("#date_and_day").val()
+                    },
+                    function (data, status) {
+                        $("#form1").html(data);
+                    }
+                );
             });
 
             $('#cmd-left').click(function () {
@@ -227,6 +249,7 @@
             $('#toolbar button').focus(function () {
                 $(this).blur();
             });
+
         });
 
         function openTab(tabEleID, elmnt) {
@@ -250,7 +273,7 @@
 
     <button class="tablink" onclick="openTab('RepeatedPost', this)" id="defaultOpen">RepeatedPost</button>
     <button class="tablink" onclick="openTab('SinglePost', this)">SinglePost</button>
-    
+
 
     <div class="container">
         <div class="row">
@@ -263,54 +286,54 @@
 
             <div id="RepeatedPost" class="tabcontent col-sm-4">
 
-                
-                    <table id="sheet" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th v-for="cell in header" v-on:click="focus(cell)" v-text="cell.text"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="tr in rows">
-                                <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="changeColor" v-text="cell.text"></td>
-                            </tr>
-                        </tbody>
-                    </table>
 
-                    <div class="tripchoice">
-                        <div class="subchoice">
-                            <button class="subchoicebtn">To Campus/From Campus</button>
-                            <div class="subchoice-content">
-                                <div id="to_campus">To Campus</div>
-                                <div id="from_campus">From Campus</div>
-                            </div>
+                <table id="sheet" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th v-for="cell in header" v-on:click="focus(cell)" v-text="cell.text"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="tr in rows">
+                            <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="changeColor" v-text="cell.text"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="tripchoice">
+                    <div class="subchoice">
+                        <button class="subchoicebtn">To Campus/From Campus</button>
+                        <div class="subchoice-content">
+                            <div id="to_campus">To Campus</div>
+                            <div id="from_campus">From Campus</div>
                         </div>
                     </div>
-                    <button id="cmd-refresh" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
-                        Refresh</button>
-                    <button id="cmd-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
-                        Post</button>
-                
+                </div>
+                <button id="cmd-refresh-1" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
+                    Refresh</button>
+                <button id="cmd-post-1" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
+                    Post</button>
+
             </div>
 
             <div id="SinglePost" class="tabcontent col-sm-4">
-                
-                    
 
-                    <div class="tripchoice">
-                        <div class="subchoice">
-                            <button class="subchoicebtn">To Campus/From Campus</button>
-                            <div class="subchoice-content">
-                                <div id="to_campus">To Campus</div>
-                                <div id="from_campus">From Campus</div>
-                            </div>
+                date and day: <input type="date" id="date_and_day">
+
+                <div class="tripchoice">
+                    <div class="subchoice">
+                        <button class="subchoicebtn">To Campus/From Campus</button>
+                        <div class="subchoice-content">
+                            <div id="to_campus">To Campus</div>
+                            <div id="from_campus">From Campus</div>
                         </div>
                     </div>
-                    <button id="cmd-refresh" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
-                        Refresh</button>
-                    <button id="cmd-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
-                        Post</button>
-                
+                </div>
+                <button id="cmd-refresh-2" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
+                    Refresh</button>
+                <button id="cmd-post-2" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
+                    Post</button>
+
             </div>
 
 
