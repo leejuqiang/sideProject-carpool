@@ -10,22 +10,50 @@
     <link rel="stylesheet" href="css/home.css">
 </head>
 
+<script language="JavaScript">
+    function onHomeLogin() {
+        parent.location.href = "login.html";
+    }
+</script>
+
 <body>
     <div>
         <div>
             <div class="center">
-                <p class="tText tLeft">telskjgaslgjlsajglasjglasgjlsagj</p>
-                <img class="tImage tLeft" src="timage.png" />
-            </div>
-            <div class="center">
-                <p class="tText tRight">telskjgaslgjlsajglasjglasgjlsagj</p>
+                <div class="tText tLeft">
+                    <h1>Heave Traffic?</h1>
+                    <h1>Need a parking spot?</h1>
+                    <p>Why not using car pool lane?
+                        <br /> Do you know USF has carpool permit?
+                    </p>
+                </div>
                 <img class="tImage tRight" src="timage.png" />
             </div>
             <div class="center">
-                <p class="tText tLeft">telskjgaslgjlsajglasjglasgjlsagj</p>
+                <div class="tText tRight">
+                    <h1>Do you drive to campus?</h1>
+                    <h1></h1>
+                    <p>Find people near you who will riding with you.
+                        <br /> Meet people who is your college.
+                    </p>
+                </div>
                 <img class="tImage tLeft" src="timage.png" />
             </div>
+            <div class="center">
+                <div class="tText tLeft">
+                    <h1>Don't have a car?</h1>
+                    <h1>No problem!</h1>
+                    <p>Find drivers near you who will share the riding.
+                        <br /> Be a nice passenger and enjoy.
+                    </p>
+                </div>
+                <img class="tImage tRight" src="timage.png" />
+            </div>
         </div>
+    </div>
+    <div class="center">
+        <p class="centerText">Login with your USF account</p>
+        <a class="signIn textColorWhite backgroundColorSuccess" onclick="onHomeLogin()">Sign in</a>
     </div>
 </body>
 

@@ -17,6 +17,14 @@ function getUser() {
     }
 }
 
+function onClickDriver(){
+    showIframe("driverPanel.html");
+}
+
+function onClickPassenger(){
+    showIframe("passengerPage.html");
+}
+
 function refreshData() {
     if (!runTimeData.user.isLogin()) {
         $("#loading").css({ "display": "none" });
