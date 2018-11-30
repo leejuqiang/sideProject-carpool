@@ -8,7 +8,7 @@ tyep:0 indicate that this is a ride to school
 availableSeats:{"110":4, "310":4} indicate that departure time is at 10 AM at Monday and Wednsday. Both available seats are 4
 we constrains the departure time from 8 AM to 8PM, other time not allowed.
 
-driveradditionalpost: userID: string, lat: number, long: number, date: string, time: string, maxSeats: number, availableSeats: number,type: number
+driveradditionalpost: userID: string, lat: number, long: number, date: Number, time: string, maxSeats: number, availableSeats: number,type: number
 drivercanceledpost: userID: string, date:string, postID:string, time: string
 
 repeatedapplication: userID: string, driverPostID: [string], day: string, time: string, passengerNumber: number, status:[number]
