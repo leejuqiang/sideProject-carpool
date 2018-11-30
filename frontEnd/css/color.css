@@ -38,8 +38,14 @@
 }
 
 .header {
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
     height: 80px;
     background-color: aliceblue;
+    display: block;
+    border: none;
+    min-width: 100%;
 }
 
 .unselectable{
