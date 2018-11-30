@@ -142,10 +142,10 @@
                         cancellationPost;
                         repeatApplicationForPost;
                         addApplicationForPost;
-                        
+
                         //set rows
                         for (var rowIndex = 8; rowIndex <= 20; rowIndex++) {
-                            for(var colIndex = 1; colIndex <= COLUMNS; colIndex++){
+                            for (var colIndex = 1; colIndex <= COLUMNS; colIndex++) {
                                 this.rows[rowIndex][colIndex].text = "has";
                             }
                         }
@@ -250,17 +250,20 @@
 
     <button class="tablink" onclick="openTab('RepeatedPost', this)" id="defaultOpen">RepeatedPost</button>
     <button class="tablink" onclick="openTab('SinglePost', this)">SinglePost</button>
-    <br />
-    <div id="RepeatedPost" class="tabcontent">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-8">
-                    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-                    <div id="map"></div>
-                </div>
+    
 
-                <div class="col-sm-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <br />
+                <br />
+                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                <div id="map"></div>
+            </div>
 
+            <div id="RepeatedPost" class="tabcontent col-sm-4">
+
+                
                     <table id="sheet" class="table table-bordered">
                         <thead>
                             <tr>
@@ -287,24 +290,33 @@
                         Refresh</button>
                     <button id="cmd-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                         Post</button>
-
-                </div>
+                
             </div>
-            <div class="row">
-                <form id="form1"> </form>
+
+            <div id="SinglePost" class="tabcontent col-sm-4">
+                
+                    
+
+                    <div class="tripchoice">
+                        <div class="subchoice">
+                            <button class="subchoicebtn">To Campus/From Campus</button>
+                            <div class="subchoice-content">
+                                <div id="to_campus">To Campus</div>
+                                <div id="from_campus">From Campus</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="cmd-refresh" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-refresh"></i>
+                        Refresh</button>
+                    <button id="cmd-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
+                        Post</button>
+                
             </div>
-        </div>
-    </div>
-
-    <div id="SinglePost" class="tabcontent">
-        <h1>SinglePost</h1>
-        <p>SinglePost is the capital of France.</p>
-    </div>
 
 
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdRxq9UR0bm3ORAE_GAxYyOrIzdwNQ0dw&libraries=places&callback=initMap">
-    </script>
+            <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdRxq9UR0bm3ORAE_GAxYyOrIzdwNQ0dw&libraries=places&callback=initMap">
+            </script>
 
 </body>
 
