@@ -25,16 +25,18 @@ function getDB() {
 /**
  * Insets a record to database
  * @param collectionName {string} The name of the collection
- * @param data {Object} The record
- * @param func {function} Callback. function(errorCode err, int insertedCount)
+ * @param data {Object} The record, if successfully inserted, the _id will be added to the data
+ * @param func {function} Callback. function(errorCode err)
  */
 exports.insert = function (collectionName, data, func) {
-    getDB().collection(collectionName).insert(data, function (err, res) {
+    getDB().collection(collectionName).insertOne(data, function (err, res) {
         if (err === null) {
-            func(null, res.insertedCount);
+            data._id = res.insertedId;
+            server.logger.info("insert into collection " + collectionName + " with id " + data._id.toString());
+            func(null);
         } else {
             server.logger.error("insert to db error: " + err);
-            func(server.errorCode.databaseError, 0);
+            func(server.errorCode.databaseError);
         }
     });
 }
@@ -73,6 +75,15 @@ exports.query = function (collectionName, query, func) {
     });
 }
 
+exports.clearCollection = function (collectionName, func) {
+    getDB().collection(collectionName).deleteMany({}, function (err, result) {
+        if (err === null) {
+            console.log("delete " + result.result.n + " records");
+        }
+        func();
+    });
+}
+
 /**
  * Logins a user
  * @param loginName {string} The loginName
@@ -89,7 +100,7 @@ exports.loginUser = function (loginName, password, func) {
             } else {
                 var user = results[0];
                 var userId = server.getIdString(user);
-                var t = Date.now();
+                var t = server.timeStamp();
                 var sess = userId + t;
                 t += 3600000;
                 exports.update("user", { "_id": user._id }, { $set: { "sessionID": sess, "expire": t } }, function (err, res) {

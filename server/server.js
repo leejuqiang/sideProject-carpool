@@ -31,6 +31,9 @@ moduleLog.configure({
     }
 });
 exports.logger = moduleLog.getLogger("default");
+exports.timeStamp = function () {
+    return Date.now();
+}
 
 const options = { "key": moduleFs.readFileSync("./privatekey.pem"), "cert": moduleFs.readFileSync("./cert.pem") };
 
@@ -48,11 +51,12 @@ app.delete("/driverCancelSinglePost", require("./handle_driverCancelSinglePost")
 
 //passenger part
 app.get("/passengerPanel", require("./passengerPanel").onRequest);
-app.post("/passengerPanel",require("./passengerPanel").onRepeatedPanelRequest);
+app.post("/passengerPanel", require("./passengerPanel").onRepeatedPanelRequest);
 
 app.post("/refresh", require("./refreshData").onRequest);
 
 app.get("/test", require("./test").onRequest);
+app.get("/test/initdb", require("./test").initTestData);
 
 /**
  * Call this function to respond to client with a http code
