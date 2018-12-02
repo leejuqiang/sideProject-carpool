@@ -51,8 +51,12 @@ app.delete("/driverCancelSinglePost", require("./handle_driverCancelSinglePost")
 
 //passenger part
 app.get("/passengerPanel", require("./passengerPanel").onRequest);
-app.post("/passengerPanel", require("./passengerPanel").onRepeatedPanelRequest);
+app.post("/repeatedPanel",require("./passengerPanel").onRepeatedPanelRequest);
 app.post("/singlePanel", require("./passengerPanel").onSinglePanelRequest);
+app.post("/repeatedDriverList", require("./passengerPanel").onRepeatedDriverList);
+app.post("/singleDriverList", require("./passengerPanel").onSingleDriverLisst);
+
+
 
 app.post("/refresh", require("./refreshData").onRequest);
 

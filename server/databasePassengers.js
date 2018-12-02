@@ -3,7 +3,7 @@ var server = require("./server");
 
 function generateEmptyAvailSeatsCount() {
     var BLOCKS = 12;
-    var seatsCount = [[],[],[],[],[],[],[]];//sunday, monday, tuesday, ... Saturday
+    var seatsCount = [[],[],[],[],[],[],[]];//monday, tuesday, ... Saturday,Sunday
     var day;
     for (day = 0; day<=6; day++) {
         var t;
@@ -33,7 +33,7 @@ exports.searchRepeatedPostsForCount = function(userID, semester, passengerNumber
             func(err, null);
             return;
         }
-        var availSeatsCount = generateEmptyAvailSeatsCount();//sunday, monday, tuesday, ... Saturday
+        var availSeatsCount = generateEmptyAvailSeatsCount();//monday, tuesday, ... Saturday,Sunday
         //passengerNumber filter by availableSeats of results
         for(i in results) {
             var repeatedPost = results[i];
@@ -42,6 +42,70 @@ exports.searchRepeatedPostsForCount = function(userID, semester, passengerNumber
         func(null, availSeatsCount);
     });
 }
+
+
+exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, passengerNumber, lat, long, range, func) {
+    var minLat = lat - range;
+    var maxLat = lat + range;
+    var minLong = long - range;
+    var maxLong = long + range;
+    var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
+                "long": { "$gt": minLong, "$lt": maxLong },
+                "semester":semester,
+                "maxSeats":{"$gte": passengerNumber},
+                "userID":{ $ne: userID }};//do not get the user's own posts
+    server.database.query("driverrepeatedpost", query, function(err, results){
+        if(err !== null) {
+            func(err, null);
+            return;
+        }
+        var postsList = [];
+        for(i in results) {
+            var repeatedPost = results[i];
+            collectRepeatedDriverResult(postsList, day,time, repeatedPost, passengerNumber);
+        }
+        func(null, postsList);
+    });
+}
+
+function collectRepeatedDriverResult(postsList, day, time, repeatedPost, passengerNumber) {
+    for(tStr in repeatedPost.availableSeats) {
+        var t = parseInt(tStr);
+        var resday = Math.round(t / 100);//which weekday range[1,7]
+        var restime = Math.round(t % 100); //depart time range[8,20] indicating from 8 am to 8pm
+        if(resday != 1 || resday > 7 || restime < 8 || restime > 20) {
+            return;
+        }
+        if(resday === day && restime === time) {
+            if(repeatedPost.availableSeats[tStr] >= passengerNumber) {
+                postsList.push(repeatedPost);
+            }
+            break;
+        }
+    }
+    return postsList;
+}
+
+exports.searchSinglePostsOnTimeBlock = function(userID, date, time, passengerNumber, lat, long, range, func) {
+    var minLat = lat - range;
+    var maxLat = lat + range;
+    var minLong = long - range;
+    var maxLong = long + range;
+    var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
+                "long": { "$gt": minLong, "$lt": maxLong },
+                "date":date,
+                "time":time,
+                "maxSeats":{"$gte": passengerNumber},
+                "userID":{ $ne: userID }};//do not get the user's own posts
+    server.database.query("driveradditionalpost", query, function(err, results){
+        if(err !== null) {
+            func(err, null);
+            return;
+        }
+        func(null, results);
+    });
+}
+
 
 /**
  * search in table driveradditionalPost for posts that qualifies the serach conditions
@@ -69,7 +133,7 @@ exports.searchSinglePostsForCount = function(userID, startDate, endDate, passeng
             func(err, null);
             return;
         }
-        var availSeatsCount = generateEmptyAvailSeatsCount();//sunday, monday, tuesday, ... Saturday
+        var availSeatsCount = generateEmptyAvailSeatsCount();//monday, tuesday, ... Saturday,Sunday
         //passengerNumber filter by availableSeats of results
         for(i in results) {
             var singlePost = results[i];
@@ -88,7 +152,7 @@ exports.searchSinglePostsForCount = function(userID, startDate, endDate, passeng
 function countOneSinglePost(availSeatsCount, singlePost, passengerNumber) {
     var singlePostDay = toWeekDay(singlePost.date);//get which weekday the post is in
     if(singlePost.availableSeats >= passengerNumber) {
-        var time = availSeatsCount.time;
+        var time = singlePost.time;
         availSeatsCount[singlePostDay-1][time-8] += 1;
     }
     return availSeatsCount;
