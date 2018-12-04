@@ -18,6 +18,13 @@ function onLogin() {
     });
 }
 
+function changeColor(row, column, color){
+    var r = $("#sheet tbody tr:nth-child(" + row + ")");
+    var c = r.find("td:nth-child(" + column + ")");
+    // c.attr("bgColor", "#00000");
+    c.attr("bgColor", color);
+}
+
 function loginErrorFunction() {
     $("#login_error").show()
 }
