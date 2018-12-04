@@ -1,42 +1,21 @@
-function onLogin() {
-    var usr = $("#userName").val();
-    var pass = $("#pass").val();
-    var body = { "userName": usr, "password": pass, "isDriver": true };
-    $.post("/login", JSON.stringify(body), function (data, status, xhr) {
-        console.log(data);
-        var dataObj = JSON.parse(data);
-        var now = new Date();
-        now = now.getTime();
-        now += 3600000;
-        localStorage.setItem("sessionTime", now.toString());
-        localStorage.setItem("sessionID", dataObj.sessionID);
-        localStorage.setItem("userName", dataObj.userName);
-        window.location.href = "../";
-    }).fail(function(xhr, status, error){
-        console.log(xhr.statusText);
-        loginErrorFunction();
-    });
-}
-
-function changeColor(row, column, color){
+function alterivelychangeColor(row, column){
+    
     var r = $("#sheet tbody tr:nth-child(" + row + ")");
     var c = r.find("td:nth-child(" + column + ")");
-    // c.attr("bgColor", "#00000");
-    c.attr("bgColor", color);
+    
+    if(c.attr("bgColor") == "#F5A735"){
+        c.attr("bgColor", "#ffffff");
+    }else{
+        c.attr("bgColor", "#F5A735");
+    }   
 }
 
-function loginErrorFunction() {
-    $("#login_error").show()
-}
-
-function isLogin() {
-    var timeStamp = (new Date()).getTime();
-    var sessionTime = localStorage.getItem("sessionTime");
-    if (sessionTime != null) {
-        sessionTime = parseInt(sessionTime);
-        return timeStamp < sessionTime;
-    }
-    return false;
+function changeColorForComforimation(row, column){
+    
+    var r = $("#sheet tbody tr:nth-child(" + row + ")");
+    var c = r.find("td:nth-child(" + column + ")");
+    
+    c.attr("bgColor", "#29EC34");
 }
 
 function refreshData() {
@@ -49,4 +28,12 @@ function refreshData() {
     }).fail(function (xhr, error, s) {
         setTimeout(refreshData, 10000);
     });
+}
+
+function getRowIndex(rawRowIndex){
+    return rawRowIndex - 7;
+}
+
+function getColIndex(rawColIndex){
+    return rawColIndex + 1;
 }

@@ -51,6 +51,9 @@
             text-align: center;
         }
 
+        .initialColor {
+            color: rgb(250, 250, 249);
+        }
         .waitingColor {
             color: rgb(240, 221, 50);
         }
@@ -154,16 +157,6 @@
                             }
                         }
                     },
-                    post: function () {
-                        //post data to server
-                        this.$resource('/apply' + ID).save({
-                            rows: this.rows
-                        }).then(function (resp) {
-                            console.log('saved ok.');
-                        }, function (resp) {
-                            alert('failed to save.');
-                        });
-                    },
                     focus: function (cell) {
                         this.selectedRowIndex = cell.row;
                         this.selectedColIndex = cell.col;
@@ -178,20 +171,22 @@
                             this.rows[rowIndex - 1][colIndex].text = text;
                         }
                     },
-                    changeColor: function (e) {
+                    changeColor: function (cell) {
+                        this.selectedRowIndex = cell.row;
+                        this.selectedColIndex = cell.col;
                         var
-                            rowIndex = this.selectedRowIndex,
-                            colIndex = this.selectedColIndex;
-                        lc = getSelectedLocation();
-                        if (rowIndex > 0 && colIndex > 0) {
-                            addNewLocationToMarker(lc.lat, lc.lng);
-                            alert(lc.lat + " , " + lc.lng);
-                            e.target.waitingColor;
-                        }
+                            rowIndex = getRowIndex(this.selectedRowIndex),
+                            colIndex = getColIndex(this.selectedColIndex);
+                
+                        alterivelychangeColor(rowIndex, colIndex);
+                        
                     }
                 }
             });
             window.vm = vm;
+
+            
+
 
             var setAlign = function (align) {
                 var
@@ -213,7 +208,8 @@
             });
 
             $('#cmd-post-1').click(function () {
-                vm.post();
+                
+                //TODO changed post path
                 $.post("reviewsearch",
                     {
                         date: $("#textbox1").val()
@@ -225,11 +221,16 @@
             });
 
             $('#cmd-post-2').click(function () {
-                vm.post();
+                lc = getSelectedLocation();
+                if (rowIndex > 0 && colIndex > 0) {
+                    addNewLocationToMarker(lc.lat, lc.lng);
+                    
                 //TODO changed post path
                 $.post("reviewsearch",
                     {
-                        date: $("#date_and_day").val()
+                        date: $("#date_and_day").val(),
+                        
+                        
                     },
                     function (status) {
                         $(".status").text(status);
@@ -302,7 +303,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="tr in rows">
-                            <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="changeColor" v-text="cell.text"></td>
+                            <td v-for="cell in tr" v-on:click="changeColor(cell)" v-text="cell.text"></td>
                         </tr>
                     </tbody>
                 </table>
