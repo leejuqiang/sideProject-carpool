@@ -54,6 +54,7 @@ function onLoad() {
     getUser();
     refreshData();
     showIframe("home.html");
+    userStatus(!runTimeData.user.isLogin());
 }
 
 function onDayBtn(i) {
@@ -273,9 +274,8 @@ function createPostCell(post, node) {
     node.append(str);
 }
 
-function onLogin() {
+function statusOpreation() {
     if (runTimeData.user.isLogin()) {
-        userData = {};
         localStorage.removeItem("userId");
         localStorage.removeItem("session");
         localStorage.removeItem("expire");
