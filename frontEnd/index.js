@@ -17,11 +17,11 @@ function getUser() {
     }
 }
 
-function onClickDriver(){
+function onClickDriver() {
     showIframe("driverPanel.html");
 }
 
-function onClickPassenger(){
+function onClickPassenger() {
     showIframe("passengerPage.html");
 }
 
@@ -32,17 +32,22 @@ function refreshData() {
         return;
     }
     $.post("/refresh", { "sessionID": runTimeData.user.session, "userID": runTimeData.user.userId }, function (data, s, xhr) {
-        console.log(data);
-        var user = runTimeData.user;
-        user.repeatedPost = data.repeatedPost;
-        user.additionalPost = data.additionalPost;
-        user.cancellationPost = data.cancellationPost;
-        user.repeatedApplication = data.repeatedApplication;
-        user.additionalApplication = data.additionalApplication;
-        user.repeatApplicationForPost = data.repeatApplicationForPost;
-        user.addApplicationForPost = data.addApplicationForPost;
-        $("#loading").css({ "display": "none" });
-        $("#main").css({ "display": "block" });
+        data = JSON.parse(data);
+        if (data.error.code == 0) {
+            var user = runTimeData.user;
+            user.repeatedPost = data.repeatedPost;
+            user.additionalPost = data.additionalPost;
+            user.cancellationPost = data.cancellationPost;
+            user.repeatedApplication = data.repeatedApplication;
+            user.additionalApplication = data.additionalApplication;
+            user.repeatApplicationForPost = data.repeatApplicationForPost;
+            user.addApplicationForPost = data.addApplicationForPost;
+            $("#loading").css({ "display": "none" });
+            $("#main").css({ "display": "block" });
+        }
+        else {
+            window.location.href = "/login.html";
+        }
     }).fail(function (xhr, error, s) {
         $("#loading").css({ "display": "none" });
         $("#main").css({ "display": "block" });
