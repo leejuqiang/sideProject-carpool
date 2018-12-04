@@ -264,3 +264,85 @@ exports.getPostInRange = function (collectionName, lat, long, range, func) {
     var query = { "lat": { "$gt": minLat, "$lt": maxLat }, "long": { "$gt": minLong, "$lt": maxLong } };
     exports.query(collectionName, query, func);
 }
+
+
+/**
+ * Check time confliction （whether driver/passanger additional is valid）
+ * @param userID {number} The id of user
+ * @param date {number} The date (eg. 20180810)
+ * @param time {number} The time (from 8 to 20)
+ * @param func {function} The callback. function(errorCode error)
+ */
+exports.checkAdditionalValidate = function(userID, date, time, func){
+    // var id = server.getIdString(user);
+    exports.query("driveradditionalpost", { "userID": userID, "date": date, "time": time }, function (err, adPosts) {
+        if (err !== null) {
+            func(err);
+            return;
+        }
+        if(adPosts != null){
+            func(server.errorCode.timeConflict);
+        }
+        else{
+            //status is 1(accept)
+            exports.query("additionalapplication", { "userID": id, "status": 1}, function (err, adApplication) {
+                if (err !== null) {
+                    func(err);
+                    return;
+                }
+                var i;
+                for (i = 0; i < adApplication.length; i++) { 
+                    var driverPostID = adApplication[i][driverPostID];
+                    exports.query("driveradditionalpost", { "userID": driverPostID, "date": date, "time": time }, function (err, adPostResult) {
+                        if (err !== null) {
+                            func(err);
+                            return;
+                        }
+                        if(adPostResult != null){
+                            func(server.errorCode.timeConflict);
+                            return;
+                        }
+                    });  
+                }
+                func(null);
+            });
+        }      
+    });  
+}
+/**
+ * Check time confliction（whether driver/passanger repeated is valid）
+ * @param userID {number} The id of user
+ * @param day {number} The day (Monday to Sunday: 1 to 7)
+ * @param time {number} The time (from 08 to 20)
+ * @param func {function} The callback. function(errorCode error)
+ */
+exports.checkRepeatedValidate = function(userID, day, time, func){
+    // var id = server.getIdString(user);
+    //day: 1 2 3 4 5 6 7
+    //time: 08 ~ 20
+    var key = "availableSeats." + 100 * day + time;
+    //cursor = db.inventory.find({"size.uom": "cm"})
+    //# 查询所有文档中，没有item字段的记录
+    //cursor = db.inventory.find({"item": {"$exists": False}})
+    exports.query("driverrepeatedpost", { "userID": userID, key : {"$exists": true} }, function (err, rpPosts) {
+        if (err !== null) {
+            func(err);
+            return;
+        }
+        if(rpPosts != null){
+            func(server.errorCode.timeConflict);
+        }
+        else{
+            exports.query("repeatedapplication", { "userID": id, "day": day, "time": time }, function (err, rpApplications) {
+                if (err !== null) {
+                    func(err);
+                    return;
+                }
+                if(rpApplications != null){
+                    func(server.errorCode.timeConflict);
+                }
+                func(null);
+            });
+        }
+    });
+}

@@ -11,10 +11,10 @@ var user1 = { "loginName": "li", "name": "Li", "password": "1234", "sessionID": 
 var user2 = { "loginName": "zun", "name": "Zun", "password": "1234", "sessionID": "1234567", "expire": 0 };
 var drpost1 = { userID: 0, lat: 0, long: 0, availableSeats: { 108: 3, 310: 3 }, maxSeats: 3, semester: "1", type: 0 };
 var drpost2 = { userID: 0, lat: 0, long: 0, availableSeats: { 208: 3, 510: 3, 111: 2 }, maxSeats: 3, semester: "1", type: 0 };
-var dapost1 = { userID: 0, lat: 0, long: 0, date: server.timeStamp() + 24 * 3600 * 1000, maxSeats: 2, availableSeats: 2, type: 0 };
-var dapost2 = { userID: 0, lat: 0, long: 0, date: server.timeStamp() + 24 * 3600 * 1000, maxSeats: 2, availableSeats: 2, type: 0 };
-var repApp1 = { userID: 0, driverPostID: [], day: "1", time: "08", passengerNumber: 1, status: [0] };
-var repApp2 = { userID: 0, driverPostID: [], day: "5", time: "10", passengerNumber: 1, status: [0] };
+var dapost1 = { userID: 0, lat: 0, long: 0, date: 20181208, time:10, maxSeats: 2, availableSeats: 2, type: 0 };
+var dapost2 = { userID: 0, lat: 0, long: 0, date: 20181225, time:16, maxSeats: 2, availableSeats: 2, type: 0 };
+var repApp1 = { userID: 0, driverPostID: [], day: 1, time: 8, passengerNumber: 1, status: [0] };
+var repApp2 = { userID: 0, driverPostID: [], day: 5, time: 10, passengerNumber: 1, status: [0] };
 var addApp1 = { userID: 0, driverPostID: [], passengerNumber: 1, status: [0] };
 var addApp2 = { userID: 0, driverPostID: [], passengerNumber: 1, status: [0] };
 
@@ -64,3 +64,9 @@ function insert(parameters, func) {
         func();
     });
 }
+
+// exports.testChcek = function (req, res) {
+//     server.database.checkAdditionalValidate(1, 20181208, 10, function(error){
+//         server.respond(res, 200, error);
+//     });
+// }
