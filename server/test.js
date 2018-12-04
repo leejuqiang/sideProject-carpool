@@ -29,16 +29,16 @@ exports.initTestData = function (req, res) {
 
 
     q.add(insert, ["user", user1], function (parameters) {
-        drpost1.userID = user1._id;
-        dapost1.userID = user1._id;
-        repApp1.userID = user2._id;
-        addApp1.userID = user2._id;
+        drpost1.userID = user1._id.toString();
+        dapost1.userID = user1._id.toString();
+        repApp2.userID = user1._id.toString();
+        addApp2.userID = user1._id.toString();
     });
     q.add(insert, ["user", user2], function (parameters) {
-        drpost2.userID = user2._id;
-        dapost2.userID = user2._id;
-        repApp2.userID = user1._id;
-        addApp2.userID = user1._id;
+        drpost2.userID = user2._id.toString();
+        dapost2.userID = user2._id.toString();
+        repApp1.userID = user2._id.toString();
+        addApp1.userID = user2._id.toString();
     });
     q.add(insert, ["driverrepeatedpost", drpost1], function (parameters) { repApp1.driverPostID.push(drpost1._id.toString()) });
     q.add(insert, ["driverrepeatedpost", drpost2], function (parameters) { repApp2.driverPostID.push(drpost2._id.toString()) });
