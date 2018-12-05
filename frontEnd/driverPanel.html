@@ -84,6 +84,8 @@
     <script>
 
         var COLUMNS = 7;
+        var
+            cur_lc, cur_date_and_day, cur_type, cur_seatNumber, cur_time;
 
         function createHeader() {
             var hdr = [{
@@ -132,8 +134,7 @@
 
         $(document).ready(function () {
             $("#defaultOpen").click();
-            var
-                lc, date_and_day, direcction;
+            
             var vm = new Vue({
                 el: '#sheet',
                 data: {
@@ -149,8 +150,6 @@
                         cancellationPost;
                         repeatApplicationForPost;
                         addApplicationForPost;
-
-                        //set rows
                         for (var rowIndex = 8; rowIndex <= 20; rowIndex++) {
                             for (var colIndex = 1; colIndex <= COLUMNS; colIndex++) {
                                 this.rows[rowIndex][colIndex].text = "has";
@@ -178,7 +177,13 @@
                             rowIndex = getRowIndex(this.selectedRowIndex),
                             colIndex = getColIndex(this.selectedColIndex);
                 
-                        alterivelychangeColor(rowIndex, colIndex);
+                        if(alterivelychangeColor(rowIndex, colIndex)){
+                            console.log("added: " + (100 * this.selectedColIndex + this.selectedRowIndex));
+                            cur_time = [[100 * this.selectedColIndex + this.selectedRowIndex]];
+                        }else{
+                            console.log("removed: " + (100 * this.selectedColIndex + this.selectedRowIndex));
+                            cur_time = [[]];
+                        }
                         
                     }
                 }
@@ -207,30 +212,19 @@
                 vm.refresh();
             });
 
-            $('#cmd-post-1').click(function () {
-                
-                //TODO changed post path
-                $.post("reviewsearch",
-                    {
-                        date: $("#textbox1").val()
-                    },
-                    function (data, status) {
-                        $("#form1").html(data);
-                    }
-                );
-            });
-
-            $('#cmd-post-2').click(function () {
+            $('#repeated-post').click(function () {
                 lc = getSelectedLocation();
-                if (rowIndex > 0 && colIndex > 0) {
-                    addNewLocationToMarker(lc.lat, lc.lng);
-                    
-                //TODO changed post path
-                $.post("reviewsearch",
+                cur_seatNumber = $(".cur_seatNumber").val();
+                $.post("repeatedDriverList",
                     {
-                        date: $("#date_and_day").val(),
-                        
-                        
+                        date: cur_date_and_day,
+                        lat: lc.lat,
+                        long: lc.lng,
+                        sessionID: runTimeData.user.session,
+                        userID: runTimeData.user.userId,
+                        semester: "fall",
+                        type: cur_type,
+                        seatNumber: cur_seatNumber
                     },
                     function (status) {
                         $(".status").text(status);
@@ -238,20 +232,33 @@
                 );
             });
 
-            $('.to_campus').click(
-                
-            )
-
-            $('#cmd-left').click(function () {
-                setAlign('left');
+            $('#single-post').click(function () {
+                lc = getSelectedLocation();
+                cur_date_and_day = $("#date_and_day").val();
+                cur_seatNumber = $(".cur_seatNumber").val();
+                $.post("additionalDriverPost",
+                    {
+                        date: cur_date_and_day,
+                        lat: lc.lat,
+                        long: lc.lng,
+                        sessionID: runTimeData.user.session,
+                        userID: runTimeData.user.userId,
+                        semester: "fall",
+                        type: cur_type,
+                        seatNumber: cur_seatNumber
+                    },
+                    function (status) {
+                        $(".status").text(status);
+                    }
+                );
             });
 
-            $('#cmd-center').click(function () {
-                setAlign('center');
+            $('.to_campus').click(function () {
+                cur_type = 0;
             });
 
-            $('#cmd-right').click(function () {
-                setAlign('right');
+            $('.from_campus').click(function () {
+                cur_type = 1;
             });
 
             $('#toolbar button').focus(function () {
@@ -312,15 +319,16 @@
                     <div class="subchoice">
                         <button class="subchoicebtn">To Campus/From Campus</button>
                         <div class="subchoice-content">
-                            <div class="to_campus">To Campus</div>
-                            <div class="from_campus">From Campus</div>
+                            <button class="to_campus">To Campus</button>
+                            <button class="from_campus">From Campus</button>
                         </div>
                     </div>
                 </div>
-                <button id="cmd-refresh-1" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
+                <p>available seat number: <input type="text" class="seatNumber"></input></p>
+                <button type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
                         class="glyphicon glyphicon-refresh"></i>
                     Refresh</button>
-                <button id="cmd-post-1" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
+                <button id="repeated-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                     Post</button>
                 <div class="status"> </div>
             </div>
@@ -333,15 +341,16 @@
                     <div class="subchoice">
                         <button class="subchoicebtn">To Campus/From Campus</button>
                         <div class="subchoice-content">
-                            <div class="to_campus">To Campus</div>
-                            <div class="from_campus">From Campus</div>
+                            <button class="to_campus">To Campus</button>
+                            <button class="from_campus">From Campus</button>
                         </div>
                     </div>
                 </div>
-                <button id="cmd-refresh-2" type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
+                <p>available seat number: <input type="text" class="seatNumber"></input></p>
+                <button type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
                         class="glyphicon glyphicon-refresh"></i>
                     Refresh</button>
-                <button id="cmd-post-2" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
+                <button id="single-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                     Post</button>
                 <div class="status"> </div>
             </div>

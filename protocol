@@ -4,7 +4,7 @@ user: loginName:string, name:string, password:string, sessionID:string, expire:n
 driverrepeatedpost: userID: string, lat: number, long: number, availableSeats: {}, maxSeats: number, semester:string, type: number
 example: {userID: "sdf", availableSeats: {"110":4, "310":4}, type:0 } 
 tyep:0 indicate that this is a ride to school
-    otherwise, type:0 indicating a ride from school to other places
+    otherwise, type:1 indicating a ride from school to other places
 availableSeats:{"110":4, "310":4} indicate that departure time is at 10 AM at Monday and Wednsday. Both available seats are 4
 we constrains the departure time from 8 AM to 8PM, other time not allowed.
 
@@ -81,11 +81,11 @@ client to server: sessionID: string, userID: string, applicationID: string, stat
 server to client: 
 
 repeatedDriverPost: POST /repeatedDriverPost
-client to server: sessionID: string, userID: string, lat: number, long: number, time: [[string], [string]], seatNumber: number, semester: string
+client to server: sessionID: string, userID: string, lat: number, long: number, time: [[string], [string]], seatNumber: number, semester: string, type: number
 server to client:
 
 additionalDriverPost: POST /additionalDriverPost
-client to server: sessionID: string, userID: string, lat: number, long: number, date: string, time: string, seatNumber: number
+client to server: sessionID: string, userID: string, lat: number, long: number, date: string, time: [[string]], seatNumber: number, type: number
 server to client:
 
 revertDriverRepeatedPost: DEL /revertDriverRepeatedPost
