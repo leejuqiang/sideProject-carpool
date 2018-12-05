@@ -6,6 +6,21 @@ exports.onRequest = function (req, res) {
     });
 }
 
+function testCheckTimeConfliction(collection, func) {
+    server.database.query("user", { "name": "Li" }, function (error, results) {
+        // server.respond(res, 200, server.getIdString(results[0]));
+        var userid = server.getIdString(results[0]);
+        console.log("userid:" + userid);
+        // server.database.checkAdditionalValidate(userid, 20181225, 16, function(error){
+        //     server.respond(res, error);
+        // });
+        server.database.checkRepeatedValidate(userid, 5, 10, function(error){
+            server.respond(res, error);
+        })
+    });
+}
+
+
 var date = new Date();
 var user1 = { "loginName": "li", "name": "Li", "password": "1234", "sessionID": "1234567", "expire": 0 };
 var user2 = { "loginName": "zun", "name": "Zun", "password": "1234", "sessionID": "1234567", "expire": 0 };
@@ -23,7 +38,7 @@ exports.initTestData = function (req, res) {
     q.add(clearCollection, "user", null);
     q.add(clearCollection, "driverrepeatedpost", null);
     q.add(clearCollection, "driveradditionalpost", null);
-    q.add(clearCollection, "drivercanceledpost", null);
+    // q.add(clearCollection, "drivercanceledpost", null);
     q.add(clearCollection, "repeatedapplication", null);
     q.add(clearCollection, "additionalapplication", null);
 
@@ -64,9 +79,3 @@ function insert(parameters, func) {
         func();
     });
 }
-
-// exports.testChcek = function (req, res) {
-//     server.database.checkAdditionalValidate(1, 20181208, 10, function(error){
-//         server.respond(res, 200, error);
-//     });
-// }

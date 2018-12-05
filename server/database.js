@@ -276,35 +276,38 @@ exports.getPostInRange = function (collectionName, lat, long, range, func) {
 exports.checkAdditionalValidate = function(userID, date, time, func){
     // var id = server.getIdString(user);
     exports.query("driveradditionalpost", { "userID": userID, "date": date, "time": time }, function (err, adPosts) {
-        if (err !== null) {
+        if (err != null) {
             func(err);
             return;
         }
-        if(adPosts != null){
+        if(adPosts.length != 0){
+            console.log("post: " + adPostResult);
+            console.log(adPosts);
             func(server.errorCode.timeConflict);
         }
         else{
             //status is 1(accept)
-            exports.query("additionalapplication", { "userID": id, "status": 1}, function (err, adApplication) {
+            exports.query("additionalapplication", { "userID": userID, "status": 0}, function (err, adApplication) {
                 if (err !== null) {
                     func(err);
                     return;
                 }
                 var i;
+                console.log("adApplication: " + adApplication);
+                 
+                var ids = [];
                 for (i = 0; i < adApplication.length; i++) { 
-                    var driverPostID = adApplication[i][driverPostID];
-                    exports.query("driveradditionalpost", { "userID": driverPostID, "date": date, "time": time }, function (err, adPostResult) {
-                        if (err !== null) {
-                            func(err);
-                            return;
-                        }
-                        if(adPostResult != null){
-                            func(server.errorCode.timeConflict);
-                            return;
-                        }
-                    });  
+                    ids.push(server.stringToID(adApplication[i].driverPostID[0]));
                 }
-                func(null);
+                exports.query("driveradditionalpost", { "_id": { $in: ids }, "date": date, "time": time }, function (err, adPostResult) {
+                    if (adPostResult.length == 0){
+                        func(null);
+                    }
+                    else{
+                        func(server.errorCode.timeConflict);
+                    }
+                }); 
+                
             });
         }      
     });  
@@ -320,25 +323,33 @@ exports.checkRepeatedValidate = function(userID, day, time, func){
     // var id = server.getIdString(user);
     //day: 1 2 3 4 5 6 7
     //time: 08 ~ 20
-    var key = "availableSeats." + 100 * day + time;
+    var t = 100 * day + time;
+    var key = "availableSeats." + t;
+    console.log("key:" + key);
     //cursor = db.inventory.find({"size.uom": "cm"})
     //# 查询所有文档中，没有item字段的记录
     //cursor = db.inventory.find({"item": {"$exists": False}})
+
+    //mongodb is ok, but can not find by using this code
+    //> db.driverrepeatedpost.find({"availableSeats.108": {"$exists": true},"userID":"5c070e1e974f84637bb083ba"})
     exports.query("driverrepeatedpost", { "userID": userID, key : {"$exists": true} }, function (err, rpPosts) {
         if (err !== null) {
             func(err);
             return;
         }
-        if(rpPosts != null){
+        console.log("rpPosts.length:" + rpPosts.length);
+        if(rpPosts.length != 0){
             func(server.errorCode.timeConflict);
         }
         else{
-            exports.query("repeatedapplication", { "userID": id, "day": day, "time": time }, function (err, rpApplications) {
+            //can not find any records in table repeatedapplication now, fix latter
+            exports.query("repeatedapplication", { "userID": userID, "day": day, "time": time }, function (err, rpApplications) {
                 if (err !== null) {
                     func(err);
                     return;
                 }
-                if(rpApplications != null){
+                console.log("rpApplications:" + rpApplications);
+                if(rpApplications.length != 0){
                     func(server.errorCode.timeConflict);
                 }
                 func(null);
