@@ -61,6 +61,8 @@ exports.initTestData = function (req, res) {
     q.add(insert, ["driveradditionalpost", dapost2], function (parameters) { addApp2.driverPostID.push(dapost2._id.toString()) });
     q.add(insert, ["additionalapplication", addApp1], function (parameters) { });
     q.add(insert, ["additionalapplication", addApp2], function (parameters) { });
+    q.add(insert, ["repeatedapplication", repApp1], function (parameters) { });
+    q.add(insert, ["repeatedapplication", repApp2], function (parameters) { });
     q.exe();
 }
 
