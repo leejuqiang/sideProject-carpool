@@ -14,9 +14,9 @@ function adjust() {
                         + "<li><img src='navigationIcon.png' class='menuIcon'/>"
                         + "<ul class='l2'>"
                         + "<li><a href='javascript:void(0)' class='navLink' onclick='onClickDriver()'</a>DRIVER</li>"
-                        + "<li><a href='javascript:void(0)' class='navLink' onclick='onClickPassenger()'>PASSANGER</a></li>"
+                        + "<li><a href='javascript:void(0)' class='navLink' onclick='onClickPassenger()'>PASSENGER</a></li>"
                         + "</ul></li>"
-                        + "<div class='header_right'><a id='statusinfo' href='javascript:void(0)' onclick='statusOpreation()' class='navLink'></a></div>"
+                        + "<div class='header_right'><a id='statusinfo' href='javascript:void(0)' onclick='statusOperation()' class='navLink'></a></div>"
                         + "</ul>"
                         + "</div>";
         }
@@ -25,8 +25,8 @@ function adjust() {
                         + "<div class='nva'>"
                         + "<ul class='l1'>"
                         + "<li><a href='javascript:void(0)' class='navLink' onclick='onClickDriver()'>DRIVER</a></li>"
-                        + "<li><a href='javascript:void(0)' class='navLink' onclick='onClickPassenger()'>PASSANGER</a></li>"
-                        + "<div class='header_right'><a id='statusinfo' href='javascript:void(0)' onclick='statusOpreation()' class='navLink'></a></div>"
+                        + "<li><a href='javascript:void(0)' class='navLink' onclick='onClickPassenger()'>PASSENGER</a></li>"
+                        + "<div class='header_right'><a id='statusinfo' href='javascript:void(0)' onclick='statusOperation()' class='navLink'></a></div>"
                         + "</ul>"
                         + "</div>";
         }
