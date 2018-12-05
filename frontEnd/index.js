@@ -76,7 +76,7 @@ function distance(lat1, lat2, long1, long2) {
     return a * 6378.137 * 0.621371192;
 }
 
-function statusOpreation() {
+function statusOperation() {
     if (runTimeData.user.isLogin()) {
         localStorage.removeItem("userId");
         localStorage.removeItem("session");
