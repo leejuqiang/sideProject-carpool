@@ -1,0 +1,24 @@
+Juqiang Li:
+server/server.js
+server/database.js
+server/errorCode.js
+server/login.js
+server/page.js
+server/refreshData.js
+server/syncOps.js
+server/test.js
+frontEnd/css/color.css
+frontEnd/css/home.css
+frontEnd/css/index.css
+frontEnd/css/login.css
+frontEnd/home.html
+frontEnd/index.html
+frontEnd/login.html
+frontEnd/index.js
+frontEnd/login.js
+
+Linjing Shao:
+
+Tuo Sun:
+
+Zun Yang:
