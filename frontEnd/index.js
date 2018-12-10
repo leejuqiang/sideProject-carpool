@@ -1,6 +1,4 @@
-var userData = {};
-var days = ["Mon.", "Tue.", "Wed.", "Thu.", "Fri."];
-var runTimeData = { "days": [false, false, false, false, false], "selectedPost": -1 };
+var runTimeData = {};
 
 function getUser() {
     user = { "expire": 0 };
@@ -17,12 +15,14 @@ function getUser() {
     }
 }
 
-function onClickDriver() {
-    showIframe("driverPanel.html");
-}
-
-function onClickPassenger() {
-    showIframe("passengerPage.html");
+function onClickPage(page) {
+    var user = runTimeData.user;
+    if (!user.isLogin()) {
+        window.location.href = "./login.html";
+        return;
+    }
+    page += "?user=" + user.userId + "&session=" + user.session;
+    showIframe("/" + page);
 }
 
 function refreshData() {
@@ -58,7 +58,11 @@ function onLoad() {
     adjust();
     getUser();
     refreshData();
-    showIframe("home.html");
+    if (runTimeData.user.isLogin()) {
+        onClickPage("driverPanel.html");
+    } else {
+        showIframe("home.html");
+    }
     userStatus(!runTimeData.user.isLogin());
 }
 

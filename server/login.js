@@ -11,6 +11,7 @@ exports.onRequest = function (req, res) {
             ret["userID"] = server.getIdString(user);
             ret["name"] = user["name"];
             ret["sessionID"] = user["sessionId"];
+            console.log(user.sessionId);
         }
         server.respond(res, ret);
     });

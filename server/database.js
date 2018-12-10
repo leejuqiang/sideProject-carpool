@@ -85,6 +85,35 @@ exports.clearCollection = function (collectionName, func) {
 }
 
 /**
+ * Checks if the user is valid
+ * @param userId {string} The user's id
+ * @param session {string} The user's session
+ * @param func {Function} The callback. Function(errorCode error, Object user)
+ */
+exports.validUser = function (userId, session, func) {
+    var id = server.stringToID(userId);
+    if (id === null) {
+        func(server.errorCode.invalidId, null);
+        return;
+    }
+    exports.query("user", { "_id": id, "sessionID": session }, function (err, results) {
+        if (err !== null) {
+            func(err, null);
+        } else if (results.length <= 0) {
+            func(server.errorCode.noSuchUser, null);
+        } else {
+            var user = results[0];
+            var t = server.timeStamp();
+            if (t > user.expire) {
+                func(server.errorCode.sessionInvalid, null);
+            } else {
+                func(null, user);
+            }
+        }
+    });
+}
+
+/**
  * Logins a user
  * @param loginName {string} The loginName
  * @param password {string} The password
@@ -141,7 +170,12 @@ exports.update = function (collectionName, query, set, func) {
  * @param func {function} The callback. function(Object user, errorCode error), if error is not null, then user is null
  */
 exports.getUser = function (userId, session, func) {
-    exports.query("user", { "_id": server.stringToID(userId) }, function (err, result) {
+    var id = server.stringToID(userId);
+    if (id === null) {
+        func(null, server.errorCode.invalidId);
+        return;
+    }
+    exports.query("user", { "_id": id }, function (err, result) {
         if (err !== null) {
             func(null, err);
         } else {
@@ -273,44 +307,44 @@ exports.getPostInRange = function (collectionName, lat, long, range, func) {
  * @param time {number} The time (from 8 to 20)
  * @param func {function} The callback. function(errorCode error)
  */
-exports.checkAdditionalValidate = function(userID, date, time, func){
+exports.checkAdditionalValidate = function (userID, date, time, func) {
     // var id = server.getIdString(user);
     exports.query("driveradditionalpost", { "userID": userID, "date": date, "time": time }, function (err, adPosts) {
         if (err != null) {
             func(err);
             return;
         }
-        if(adPosts.length != 0){
+        if (adPosts.length != 0) {
             console.log("post: " + adPostResult);
             console.log(adPosts);
             func(server.errorCode.timeConflict);
         }
-        else{
+        else {
             //status is 1(accept)
-            exports.query("additionalapplication", { "userID": userID, "status": 0}, function (err, adApplication) {
+            exports.query("additionalapplication", { "userID": userID, "status": 0 }, function (err, adApplication) {
                 if (err !== null) {
                     func(err);
                     return;
                 }
                 var i;
                 console.log("adApplication: " + adApplication);
-                 
+
                 var ids = [];
-                for (i = 0; i < adApplication.length; i++) { 
+                for (i = 0; i < adApplication.length; i++) {
                     ids.push(server.stringToID(adApplication[i].driverPostID[0]));
                 }
                 exports.query("driveradditionalpost", { "_id": { $in: ids }, "date": date, "time": time }, function (err, adPostResult) {
-                    if (adPostResult.length == 0){
+                    if (adPostResult.length == 0) {
                         func(null);
                     }
-                    else{
+                    else {
                         func(server.errorCode.timeConflict);
                     }
-                }); 
-                
+                });
+
             });
-        }      
-    });  
+        }
+    });
 }
 /**
  * Check time confliction（whether driver/passanger repeated is valid）
@@ -319,7 +353,7 @@ exports.checkAdditionalValidate = function(userID, date, time, func){
  * @param time {number} The time (from 08 to 20)
  * @param func {function} The callback. function(errorCode error)
  */
-exports.checkRepeatedValidate = function(userID, day, time, func){
+exports.checkRepeatedValidate = function (userID, day, time, func) {
     // var id = server.getIdString(user);
     //day: 1 2 3 4 5 6 7
     //time: 08 ~ 20
@@ -332,16 +366,16 @@ exports.checkRepeatedValidate = function(userID, day, time, func){
 
     //mongodb is ok, but can not find by using this code
     //> db.driverrepeatedpost.find({"availableSeats.108": {"$exists": true},"userID":"5c070e1e974f84637bb083ba"})
-    exports.query("driverrepeatedpost", { "userID": userID, key : {"$exists": true} }, function (err, rpPosts) {
+    exports.query("driverrepeatedpost", { "userID": userID, key: { "$exists": true } }, function (err, rpPosts) {
         if (err !== null) {
             func(err);
             return;
         }
         console.log("rpPosts.length:" + rpPosts.length);
-        if(rpPosts.length != 0){
+        if (rpPosts.length != 0) {
             func(server.errorCode.timeConflict);
         }
-        else{
+        else {
             //can not find any records in table repeatedapplication now, fix latter
             exports.query("repeatedapplication", { "userID": userID, "day": day, "time": time }, function (err, rpApplications) {
                 if (err !== null) {
@@ -349,7 +383,7 @@ exports.checkRepeatedValidate = function(userID, day, time, func){
                     return;
                 }
                 console.log("rpApplications:" + rpApplications);
-                if(rpApplications.length != 0){
+                if (rpApplications.length != 0) {
                     func(server.errorCode.timeConflict);
                 }
                 func(null);

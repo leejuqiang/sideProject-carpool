@@ -51,11 +51,13 @@ app.delete("/driverCancelSinglePost", require("./handle_driverCancelSinglePost")
 
 //passenger part
 app.get("/passengerPanel", require("./passengerPanel").onRequest);
-app.post("/repeatedPanel",require("./passengerPanel").onRepeatedPanelRequest);
+app.post("/repeatedPanel", require("./passengerPanel").onRepeatedPanelRequest);
 app.post("/singlePanel", require("./passengerPanel").onSinglePanelRequest);
 app.post("/repeatedDriverList", require("./passengerPanel").onRepeatedDriverList);
 app.post("/singleDriverList", require("./passengerPanel").onSingleDriverLisst);
 
+app.get("/driverPanel.html", require("./page").onPage);
+app.get("/passengerPage.html", require("./page").onPage);
 
 
 app.post("/refresh", require("./refreshData").onRequest);
@@ -94,12 +96,25 @@ exports.getIdString = function (data) {
 }
 
 /**
+ * Reads a html file
+ * @param path {string} The path of the file
+ * @returns {string} The text of the file
+ */
+exports.readHtml = function (path) {
+    return moduleFs.readFileSync(path, "utf8");
+}
+
+/**
  * Changes a string to a id in database
  * @param id {string} The id
  * @returns {ObjectID} The id used in mongodb
  */
 exports.stringToID = function (id) {
-    return ObjectID(id);
+    try {
+        return ObjectID(id);
+    } catch (error) {
+        return null;
+    }
 }
 
 exports.database = require("./database");
