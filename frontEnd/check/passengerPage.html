@@ -12,12 +12,31 @@
     <script src="/static/js/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
     <script src="/map.js"></script>
+    <script src="/index.js"></script>
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
     </script>
+    <script src="../clickShowDriverList.js"></script>
+    <link rel="stylesheet" href="../css/window.css">
     <style>
             #map {
-            height: 50%;
+            /* height: 50%; */
+            width: 100%;
+            height: 600px;
           }
+          .tablink {
+            background-color: #555;
+            color: white;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            font-size: 17px;
+            width: 50%;
+        }
+        .tablink:hover {
+            background-color: #777;
+        }
           /* Optional: Makes the sample page fill the window. */
           html, body {
             height: 100%;
@@ -26,9 +45,11 @@
           }
     </style>
 
-    <script>
+<script>
 
 var COLUMNS = 7;
+var DAYNAME = {"1":"MON","2":"TUE","3":"WED","4":"THUR","5":"FRI","6":"SAT","7":"SUN"};
+var ROWS = 13;
 
 function createHeader() {
     var hdr = [{
@@ -36,31 +57,36 @@ function createHeader() {
         col: 0,
         text: ''
     }];
+
     for (var i=1; i<=COLUMNS; i++) {
         hdr.push({
             row: 0,
             col: i,
-            text: 'Day '+i
+            text: DAYNAME[i+""]
         });
     }
+
     return hdr;
 }
+
 
 function createRow(rIndex) {
     var row = [{
         row: rIndex,
         col: 0,
         contentEditable: false,
-        text: '' + rIndex,
-        align: 'left'
+        text: '' + rIndex + ':00',
+        align: 'left',
+        color: "white"
     }];
     for (var i=1; i<=COLUMNS; i++) {
         row.push({
             row: rIndex,
             col: i,
-            contentEditable: true,
+            contentEditable: false,
             text: '',
-            align: 'left'
+            align: 'left',
+            color: "white"
         });
     }
     return row;
@@ -68,12 +94,29 @@ function createRow(rIndex) {
 
 function createRows() {
     var rows = [];
-    for (var i=1; i<=24; i++) {
+    for (var i = 8; i < 8+ROWS; i++) {
         rows.push(createRow(i));
     }
     return rows;
 }
 
+function setRows(data, rows) {
+    for(var i=0; i<ROWS; i++) {
+        var row = rows[i];
+        for(var j=0; j<COLUMNS; j++) {
+            row[j+1]["text"] = data[j][i];
+        }
+    }
+}
+
+function resetAllCellsColor(rows) {
+    for(var i=0; i<ROWS; i++) {
+        var row = rows[i];
+        for(var j=0; j<=COLUMNS; j++) {
+            row[j]["color"] = "white";
+        }
+    }
+}
 
 $(function () {
         var vm = new Vue({
@@ -86,23 +129,50 @@ $(function () {
         },
         methods: {
             refresh: function () {
+                console.log("userId:" + parent.runTimeData.user.userId);
+                console.log("sessionID:" + parent.runTimeData.user.session);
                 var that = this;
                 //request data from server
-                that.$resource('/refresh').get().then(function (resp) {
+                that.$resource('/repeatedPanel').save({
+                    // "userID":localStorage.getItem("userId"),
+                    "userID":parent.runTimeData.user.userId,
+                    // "sessionID":localStorage.getItem("sessionID"),
+                    "sessionID":parent.runTimeData.user.session,
+                    "searchCondition":{
+                            "semester":"fall",
+                            "passengerNumber":2,
+                            "lat":123,
+                            "long":456,
+                            "range":10
+                        }
+                }).then(function (resp) {
                     resp.json().then(function (result) {
-                        alert("requested data from server:" + result.message)
-                        //TO DO: set data
+                        console.log("requested data from server:" )
+                        console.log(result.availSeatsCount);
+                        setRows(result.availSeatsCount, that.rows);
                     });
                 }, function (resp) {
-                    alert('Failed to load.');
+                    alert('Failed to refesh data from server.');
                 });
             },
-            post: function () {
+            apply: function () {
                 //post data to server
-                this.$resource('/apply' + ID).save({
-                    rows: this.rows
+                var time = this.selectedRowIndex;
+                var day = this.selectedColIndex;
+                this.$resource('/repeatedApply').save({
+                    // "userID":localStorage.getItem("userId"),
+                    "userID":parent.runTimeData.user.userId,
+                    // "sessionID":localStorage.getItem("sessionID"),
+                    "sessionID":parent.runTimeData.user.session,
+                    "postIDs":["5c006444ed1026268a0a5fe5"],
+                    "day":day,
+                    "time":time,
+                    "passengerNumber":1
                 }).then(function (resp) {
                     console.log('saved ok.');
+                    resp.json().then(function (result) {
+                        console.log(result);
+                    });
                 }, function (resp) {
                     alert('failed to save.');
                 });
@@ -110,6 +180,35 @@ $(function () {
             focus: function (cell) {
                 this.selectedRowIndex = cell.row;
                 this.selectedColIndex = cell.col;
+                var time = cell.row;
+                var day = cell.col;
+                resetAllCellsColor(this.rows);
+                cell.color = "yellow";
+                this.$resource('/repeatedDriverList').save({
+                    // "userID":localStorage.getItem("userId"),
+                    "userID":parent.runTimeData.user.userId,
+                    // "sessionID":localStorage.getItem("sessionID"),
+                    "sessionID":parent.runTimeData.user.session,
+                    "searchCondition":
+                    {
+                        "semester":"1",
+                        "day":day,
+                        "time":time,
+                        "passengerNumber":1,
+                        "lat":37,
+                        "long":122,
+                        "range":100
+                    }
+                }).then(function (resp) {
+                    console.log('fetch repeated OK');
+                    resp.json().then(function (result) {
+                        console.log(result.postsList);
+                        openDialog(result.postsList);
+                    });
+                }, function (resp) {
+                    alert('failed to fetch repeated driver post list.');
+                });
+                
             },
             change: function (e) {
                 var
@@ -141,8 +240,8 @@ $(function () {
         vm.refresh();
     });
 
-    $('#cmd-post').click(function () {
-        vm.post();
+    $('#cmd-apply').click(function () {
+        vm.apply();
     });
 
     $('#cmd-left').click(function () {
@@ -160,35 +259,50 @@ $(function () {
     $('#toolbar button').focus(function () {
         $(this).blur();
     });
+    showRepeated();
 });
 
-    </script>
+
+function showRepeated() {
+    document.getElementById("SingleApplicationFilter").style.display = "none";
+    document.getElementById("RepeatedApplicationFilter").style.display = "block";
+}
+
+function showSingle() {
+    document.getElementById("RepeatedApplicationFilter").style.display = "none";
+    document.getElementById("SingleApplicationFilter").style.display = "block";
+}
+
+
+</script>
+
 </head>
 
 <body>
-    <header class="navbar navbar-static-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a href="/" class="navbar-brand">Index</a>
-            </div>
-            <nav class="collapse navbar-collapse" id="bs-navbar">
-                <ul class="nav navbar-nav">
-                    <li><a target="_blank" href="/driverPage">Driver</a></li>
-                    <li><a target="_blank" href="#">Passenger</a></li>
-                    <li><a target="_blank" href="/profile">Profile</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-            <div id="map" height="460px" width="100%"></div>
+    <button class="tablink" onclick="showRepeated()" id="defaultOpen">RepeatedApplication</button>
+    <button class="tablink" onclick="showSingle()">SingleApplication</button>
+    
     <div class="container">
-            
+            <div id="light" class="white_content"></div> 
+            <div id="fade" class="black_overlay"></div> 
         <div class="row">
-            <div>
-                    <span class="glyphicon glyphicon-th-list"></span> panel
-                    <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
-                    <button id="cmd-post" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> Post</button>
+            <div class="col-sm-6">
+                    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                    <!-- <div id="map" height="460px" width="100%"></div> -->
+                    <div id="map"></div>
+            </div>
+
+            <div class="tabcontent col-sm-6">
+                <div id="RepeatedApplicationFilter">
+                        <span class="glyphicon glyphicon-th-list"></span> Available Drivers' repeated Posts <br/>
+                        <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
+                        <button id="cmd-apply" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> Apply</button>
+                    </div>
+                    <div id="SingleApplicationFilter">
+                        <span class="glyphicon glyphicon-th-list"></span> Available Drivers' single Posts <br/>
+                        <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> xx</button>
+                        <button id="cmd-apply" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> yy</button>
+                </div>
                     <table id="sheet" class="table table-bordered">
                         <thead>
                             <tr>
@@ -197,7 +311,7 @@ $(function () {
                         </thead>
                         <tbody>
                             <tr v-for="tr in rows">
-                                <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="change" v-bind:contenteditable="cell.contentEditable" v-bind:style="{ textAlign: cell.align }" v-text="cell.text"></td>
+                                <td v-for="cell in tr" v-on:click="focus(cell)" v-on:blur="change" v-bind:contenteditable="cell.contentEditable" v-bind:bgcolor="cell.color" v-bind:style="{ textAlign: cell.align }" v-text="cell.text"></td>
                             </tr>
                         </tbody>
                     </table>
