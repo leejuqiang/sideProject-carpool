@@ -75,6 +75,11 @@ exports.query = function (collectionName, query, func) {
     });
 }
 
+/**
+ * Delete the all data form a table
+ * @param collectionName {string} The name of the collection
+ * @param func {Function} The callback. Function(errorCode error, Object user)
+ */
 exports.clearCollection = function (collectionName, func) {
     getDB().collection(collectionName).deleteMany({}, function (err, result) {
         if (err === null) {
@@ -83,6 +88,26 @@ exports.clearCollection = function (collectionName, func) {
         func();
     });
 }
+
+/**
+ * Delete the one data form a table
+ * @param collectionName {string} The name of the collection
+ * @param query {Object} The query object for mongodb
+ * @param func {Function} The callback. Function(errorCode error, Object user)
+ */
+exports.delete = function (collectionName, query, func) {
+    getDB().collection(collectionName).deleteOne(query, function (err, result) {
+        if (err === null) {
+            console.log("delete " + result.result.n + " records");
+            func(null, result.result.n);
+        }
+        else{
+            func(server.errorCode.databaseError, null);
+        }
+        
+    });
+}
+
 
 /**
  * Checks if the user is valid
@@ -346,6 +371,10 @@ exports.checkAdditionalValidate = function (userID, date, time, func) {
         }
     });
 }
+
+
+
+
 /**
  * Check time confliction（whether driver/passanger repeated is valid）
  * @param userID {number} The id of user
@@ -392,3 +421,5 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
         }
     });
 }
+
+
