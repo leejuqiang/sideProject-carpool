@@ -1,1 +1,0 @@
-/Users/alice/Desktop/SideProject/mongodb-osx-x86_64-4.0.3/bin/mongod --dbpath /Users/alice/Desktop/db --port 27000
