@@ -4,8 +4,9 @@ exports.onRequest = function (req, res) {
     // server.database.query("user", { "name": "Li" }, function (error, results) {
     //     server.respond(res, 200, server.getIdString(results[0]));
     // });
-    testDeleteRepeatedApplication(req, res);
-
+    // testDeleteRepeatedApplication(req, res);
+    testCheckRepeatedValidate(req, res);
+    // testCheckAdditionalValidate(req, res);
 }
 
 
