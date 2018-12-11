@@ -91,8 +91,11 @@ $(document).ready(function () {
     
 
     $('.cmd-refresh-btn').click(function () {
-        refreshData();
-        vm.refresh();
+        if(parent.runTimeData.user != null){
+            parent.refreshData();
+            vm.refresh();
+            showAppllications();
+        }
     });
 
     $('#single-post').click(function () {
@@ -224,6 +227,7 @@ function autoRefresh() {
     if(parent.runTimeData.user != null){
         parent.refreshData();
         vm.refresh();
+        showAppllications();
     }
     
     setTimeout(autoRefresh, 10000);
@@ -247,6 +251,10 @@ function getRawIndex(timeColIndex){
 
 function calculateTimeKey(timeRowIndex, timeColIndex){
     return String(timeColIndex * 100 + timeRowIndex);
+}
+
+function showAppllications(){
+    $("#applicationList").html(cur_runTimeData.user.repeatApplicationForPost.join("<br/>") + cur_runTimeData.user.additionalApplication.join("<br/>"));
 }
 
 
@@ -301,5 +309,6 @@ function createRows() {
     }
     return rows;
 }
+
 
 

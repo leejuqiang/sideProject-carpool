@@ -7,6 +7,7 @@ exports.onRequest = function(req, res){
     console.log(req.body);
     server.database.insert("driverrepeatedpost", req.body, function(){
         if(req.body._id != undefined){
+            console.log("id: "+req.body._id);
             server.respond(res, 200, "OK");
         }else{
             server.respond(res, 400, "Insertion Failed");
