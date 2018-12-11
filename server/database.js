@@ -41,6 +41,19 @@ exports.insert = function (collectionName, data, func) {
     });
 }
 
+exports.insertReturnId = function (collectionName, data, func) {
+    getDB().collection(collectionName).insertOne(data, function (err, res) {
+        if (err === null) {
+            data._id = res.insertedId;
+            server.logger.info("insert into collection " + collectionName + " with id " + data._id.toString());
+            func(null, data._id);
+        } else {
+            server.logger.error("insert to db error: " + err);
+            func(server.errorCode.databaseError, null);
+        }
+    });
+}
+
 /**
  * Inserts some records to database
  * @param collectionName {string} The name of the collection
