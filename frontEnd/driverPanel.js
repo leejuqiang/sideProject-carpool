@@ -1,8 +1,9 @@
 
 var COLUMNS = 7;
 var
-    cur_lc, cur_type,
+    cur_lc, cur_type = 1, cur_seatNumber = 0,
     cur_availableSeats = {};
+    cur_runTimeData = parent.runTimeData;
 
 $(document).ready(function () {
     
@@ -17,14 +18,17 @@ $(document).ready(function () {
         },
         methods: {
             refresh: function () {
-                runTimeData.user.repeatedPost;
-                additionalPost;
-                cancellationPost;
-                repeatApplicationForPost;
-                addApplicationForPost;
-                for (var rowIndex = 8; rowIndex <= 20; rowIndex++) {
+                var cur_repeatApplicationForPost = cur_runTimeData.user.repeatApplicationForPost;
+                for (var rawRowIndex = 1; rawRowIndex <= 12; rawRowIndex++) {
                     for (var colIndex = 1; colIndex <= COLUMNS; colIndex++) {
-                        this.rows[rowIndex][colIndex].text = "has";
+                        // var
+                        // cur_runTimeData.user.repeatApplicationForPost().day;
+                        // cur_runTimeData.user.repeatApplicationForPost().time;
+                        // cur_runTimeData.user.repeatApplicationForPost().status;
+                        // if(colIndex === 2 && rawRowIndex === 2){
+                        //     changeColorForWaiting(rawRowIndex, colIndex);
+                        // }
+                        
                     }
                 }
             },
@@ -48,15 +52,15 @@ $(document).ready(function () {
                 this.selectedColIndex = cell.col;
                 
                 var
-                    rowShowingIndex = getRowShowingIndex(this.selectedRowIndex),
-                    colShowingIndex = getColShowingIndex(this.selectedColIndex);
+                    timeRowIndex = getTimeRowIndex(this.selectedRowIndex),
+                    timeColIndex = getTimeColIndex(this.selectedColIndex);
 
-                if (rowShowingIndex < 1 || colShowingIndex < 2) {
+                if (timeRowIndex < 1 || timeColIndex < 2) {
                     return;
                 }
-                if(alterivelychangeColor(rowShowingIndex, colShowingIndex)){
+                if(alterivelychangeColor(timeRowIndex, timeColIndex)){
                     console.log("added: " + calculateTimeKey(this.selectedRowIndex, this.selectedColIndex));
-                    cur_availableSeats[calculateTimeKey(this.selectedRowIndex, this.selectedColIndex)] = $('.seatNumber').val();
+                    cur_availableSeats[calculateTimeKey(this.selectedRowIndex, this.selectedColIndex)] = $('#repeatedSeatNumber').val();
                 }else{
                     console.log("removed: " + calculateTimeKey(this.selectedRowIndex, this.selectedColIndex));
                     delete cur_availableSeats[calculateTimeKey(this.selectedRowIndex, this.selectedColIndex)];
@@ -87,51 +91,71 @@ $(document).ready(function () {
     
 
     $('.cmd-refresh-btn').click(function () {
-        refreshData();
-        vm.refresh();
-    });
-
-    $('#repeated-post').click(function () {
-        cur_lc = getSelectedLocation();
-        cur_seatNumber = $(".cur_seatNumber").val();
-        for(i = 0; cur_availableSeats.length; i++){
-            cur_availableSeats[i] = cur_seatNumber;
+        if(parent.runTimeData.user != null){
+            parent.refreshData();
+            vm.refresh();
+            showAppllications();
         }
-        $.post("repeatedDriverList",
-            {
-                lat: cur_lc.lat,
-                long: cur_lc.lng,
-                sessionID: runTimeData.user.session,
-                userID: runTimeData.user.userId,
-                semester: "fall",
-                type: cur_type,
-                seatNumber: cur_seatNumber
-            },
-            function (status) {
-                $(".status").text(status);
-            }
-        );
     });
 
     $('#single-post').click(function () {
         cur_lc = getSelectedLocation();
-        cur_seatNumber = $(".cur_seatNumber").val();
-        for(i = 0; cur_availableSeats.length; i++){
-            cur_availableSeats[i] = cur_seatNumber;
+        cur_seatNumber = parseInt($("#singleSeatNumber").val());
+        
+        var 
+            cur_date = transferDateStringToInt($('#date_and_day').val()),
+            cur_time = transferTimeStringToInt($('#time').val());
+        var body = {
+            "lat": cur_lc.lat,
+            "long": cur_lc.lng,
+            "date": cur_date,
+            "time": cur_time,
+            "sessionID": cur_runTimeData.user.session,
+            "userID": cur_runTimeData.user.userId,
+            "semester": "fall",
+            "type": cur_type,
+            "maxSeats": cur_seatNumber,
+            "availableSeats": cur_seatNumber
         }
+        console.log(body);
         $.post("additionalDriverPost",
-            {
-                lat: cur_lc.lat,
-                long: cur_lc.lng,
-                sessionID: runTimeData.user.session,
-                userID: runTimeData.user.userId,
-                semester: "fall",
-                type: cur_type,
-                maxSeats: cur_seatNumber,
-                availableSeats: cur_availableSeats
-            },
+            body,
             function (status) {
-                $(".status").text(status);
+                $("#SinglePostStatus").text(status);
+            }
+        ).fail(
+            function (status) {
+                $("#SinglePostStatus").text(400);
+            }
+        );
+    });
+
+    $('#repeated-post').click(function () {
+        cur_lc = getSelectedLocation();
+        cur_seatNumber = parseInt($("#repeatedSeatNumber").val());
+
+        for (var key in cur_availableSeats) {
+            cur_availableSeats[key] = cur_seatNumber;
+        }
+        var body = {
+            "lat": cur_lc.lat,
+            "long": cur_lc.lng,
+            "sessionID": cur_runTimeData.user.session,
+            "userID": cur_runTimeData.user.userId,
+            "semester": "fall",
+            "type": cur_type,
+            "maxSeats": cur_seatNumber,
+            "availableSeats": JSON.stringify(cur_availableSeats)
+        }
+        console.log(body);
+        $.post("repeatedDriverPost",
+            body,
+            function (status) {
+                $("#RepeatedPostStatus").text(status);
+            }
+        ).fail(
+            function (status) {
+                $("#RepeatedPostStatus").text(400);
             }
         );
     });
@@ -149,6 +173,13 @@ $(document).ready(function () {
     });
 
 });
+
+function transferDateStringToInt(dateString) {
+    return parseInt(dateString.split("-").join(""));
+}
+function transferTimeStringToInt(timeString) {
+    return parseInt(timeString.split("-")[0]);
+}
 
 function openTab(tabEleID, elmnt) {
     var i, tabcontent, tablinks;
@@ -182,30 +213,48 @@ function changeColorForComforimation(row, column){
     
     var r = $("#sheet tbody tr:nth-child(" + row + ")");
     var c = r.find("td:nth-child(" + column + ")");
-    
     c.attr("bgColor", "#29EC34");
 }
 
+function changeColorForWaiting(row, column){
+    var r = $("#sheet tbody tr:nth-child(" + row + ")");
+    var c = r.find("td:nth-child(" + column + ")");
+    c.attr("bgColor", "#F5A735");
+}
+
 function autoRefresh() {
-    if(runTimeData.user != null){
-        refreshData();
+    console.log(parent.runTimeData);
+    if(parent.runTimeData.user != null){
+        parent.refreshData();
         vm.refresh();
+        showAppllications();
     }
     
     setTimeout(autoRefresh, 10000);
 }
 
-function getRowShowingIndex(rawRowIndex){
+function getTimeRowIndex(rawRowIndex){
     return rawRowIndex - 7;
 }
 
+function getRawIndex(timeRowIndex){
+    return timeRowIndex + 7;
+}
 
-function getColShowingIndex(rawColIndex){
+function getTimeColIndex(rawColIndex){
     return rawColIndex + 1;
 }
 
-function calculateTimeKey(rawRowIndex, rawColIndex){
-    return String(rawColIndex * 100 + rawRowIndex);
+function getRawIndex(timeColIndex){
+    return timeColIndex - 1;
+}
+
+function calculateTimeKey(timeRowIndex, timeColIndex){
+    return String(timeColIndex * 100 + timeRowIndex);
+}
+
+function showAppllications(){
+    $("#applicationList").html(cur_runTimeData.user.repeatApplicationForPost.join("<br/>") + cur_runTimeData.user.additionalApplication.join("<br/>"));
 }
 
 
@@ -260,5 +309,6 @@ function createRows() {
     }
     return rows;
 }
+
 
 
