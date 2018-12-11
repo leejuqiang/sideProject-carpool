@@ -48,6 +48,14 @@
     min-width: 100%;
 }
 
+.headImage{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    max-height: 70px;
+    width: auto;
+}
+
 .unselectable{
     -webkit-touch-callout: none;
     -webkit-user-select: none;
