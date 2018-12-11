@@ -423,3 +423,22 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
 }
 
 
+/**
+ * Delete data from driveradditionalpost
+ * @param userID {number} The id of user
+ * @param date {number} The date (eg. 20180810)
+ * @param time {number} The time (from 8 to 20)
+ * @param func {Function} The callback. Function(errorCode error, Object user)
+ */
+exports.deleteAdditionalPost = function (userID, date, time, func) {
+    exports.delete("driveradditionalpost", { "userID": userID, "date": date, "time": time}, function(err, result){
+        if (err != null) {
+            func(err);
+        }
+        else{
+            func(result);
+        }
+        
+    });
+    
+}
