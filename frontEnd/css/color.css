@@ -51,8 +51,9 @@
 .headImage{
     position: absolute;
     top: 5px;
-    left: 5px;
+    left: 1%;
     max-height: 70px;
+    max-width: 98%;
     width: auto;
 }
 
