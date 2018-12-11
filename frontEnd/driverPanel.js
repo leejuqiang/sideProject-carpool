@@ -258,7 +258,7 @@ function showAppllications(){
     for(var i in cur_runTimeData.user.repeatApplicationForPost){
         showApplicationList += JSON.stringify(cur_runTimeData.user.repeatApplicationForPost[i]) + "<br/>";
     }
-    for(var i in cur_runTimeData.user.repeatApplicationForPost){
+    for(var i in cur_runTimeData.user.additionalApplication){
         showApplicationList += JSON.stringify(cur_runTimeData.user.additionalApplication[i]) + "<br/>";
     }
     $("#applicationList").html(showApplicationList);
