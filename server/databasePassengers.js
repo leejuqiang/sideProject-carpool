@@ -74,14 +74,22 @@ exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, p
     var maxLat = lat + range;
     var minLong = long - range;
     var maxLong = long + range;
+    // console.log(semester);
+    // console.log(day);
+    // console.log(time);
+    // console.log(passengerNumber);
+    // var query = {};
+    console.log(minLat + " " + maxLat + " | " + minLong + " " + maxLong);
     var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
-                "long": { "$gt": minLong, "$lt": maxLong },
-                "semester":semester,
-                "maxSeats":{"$gte": passengerNumber},
-                "userID":{ $ne: userID },
-                "type": type};//do not get the user's own posts
-    var query = {};
+                "long": { "$gt": minLong, "$lt": maxLong }};//do not get the user's own posts
+    // var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
+    //             "long": { "$gt": minLong, "$lt": maxLong },
+    //             "semester":semester,
+    //             "maxSeats":{"$gte": passengerNumber},
+    //             "userID":{ $ne: userID },
+    //             "type": type};//do not get the user's own posts
     server.database.query("driverrepeatedpost", query, function(err, results){
+        console.log(results.length);
         if(err !== null) {
             func(err, null);
             return;
@@ -91,6 +99,7 @@ exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, p
             var repeatedPost = results[i];
             collectRepeatedDriverResult(postsList, day,time, repeatedPost, passengerNumber);
         }
+        console.log(postsList.length);
         func(null, postsList);
     });
 }
@@ -108,7 +117,7 @@ function collectRepeatedDriverResult(postsList, day, time, repeatedPost, passeng
         var t = parseInt(tStr);
         var resday = Math.round(t / 100);//which weekday range[1,7]
         var restime = Math.round(t % 100); //depart time range[8,20] indicating from 8 am to 8pm
-        if(resday != 1 || resday > 7 || restime < 8 || restime > 20) {
+        if(resday < 1 || resday > 7 || restime < 8 || restime > 20) {
             return;
         }
         if(resday === day && restime === time) {
@@ -117,7 +126,6 @@ function collectRepeatedDriverResult(postsList, day, time, repeatedPost, passeng
             }
             break;
         }
-        postsList.push(repeatedPost);
     }
     return postsList;
 }
