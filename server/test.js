@@ -1,8 +1,18 @@
 var server = require("./server");
 
 exports.onRequest = function (req, res) {
-    server.database.query("user", { "name": "Li" }, function (error, results) {
-        server.respond(res, 200, server.getIdString(results[0]));
+    // server.database.query("user", { "name": "Li" }, function (error, results) {
+    //     server.respond(res, 200, server.getIdString(results[0]));
+    // });
+
+    server.database.query("user", { "name": "Zun" }, function (error, results) {
+       
+        var userid = server.getIdString(results[0]);
+        console.log("userid:" + userid);
+        
+        server.database.deleteAdditionalPost(userid, 20181225, 16, function(error){
+            server.respond(res, error);
+        });
     });
 
 }
