@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="css/color.css" />
+        <link rel="stylesheet" type="text/css" href="css/login.css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="css/driverlist.css">
+        <script src="driverlist.js"></script>
     </head>
     <body>
             <!-- align="center" -->
@@ -55,30 +64,6 @@
         
     </div>
 
-    <script>
-        function selectAll(){
-            var chbs = document.getElementsByName("chb[]");
-            for (var i = 0; i < chbs.length; i++) {
-                var chb = chbs[i];
-                chb.checked = true;   
-            }
-        }
-
-        function getValueWhenChecked(){
-            var tab = document.getElementById("tbl");
-            var rows = tab.rows;
-            console.log(rows.length);
-
-            var chbs = document.getElementsByName("chb[]");
-            for (var i = 0; i < chbs.length; i++) {
-                var chb = chbs[i];
-                if(chb.checked == true){0
-                    for(var j=1;j<rows[i+1].cells.length;j++){
-                        console.log("row "+(i+1)+", colum"+(j)+": vlaue is "+rows[i+1].cells[j].innerHTML);
-                    }
-                } 
-            }
-        }
-    </script>
+    
     </body>
 </html>
