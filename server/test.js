@@ -1,24 +1,80 @@
 var server = require("./server");
 
 exports.onRequest = function (req, res) {
-    server.database.query("user", { "name": "Li" }, function (error, results) {
-        server.respond(res, 200, server.getIdString(results[0]));
+    // server.database.query("user", { "name": "Li" }, function (error, results) {
+    //     server.respond(res, 200, server.getIdString(results[0]));
+    // });
+    testDeleteRepeatedApplication(req, res) ;
+
+}
+
+
+/**
+ * Test Delete Repeated Application
+ * return delete lines
+ * @param {*} req 
+ * @param {*} res 
+ */
+function testDeleteRepeatedApplication(req, res) {
+    server.database.query("user", { "name": "Zun" }, function (error, results) {       
+        var userid = server.getIdString(results[0]);
+        console.log("userid:" + userid);       
+        server.database.deleteRepeatedApplication(userid, 1, 8, function(error){
+            server.respond(res, error);
+        });
     });
 }
 
-function testCheckTimeConfliction(collection, func) {
-    server.database.query("user", { "name": "Li" }, function (error, results) {
-        // server.respond(res, 200, server.getIdString(results[0]));
+/**
+ * Test Delete Additional Post
+ * return delete lines
+ * @param {*} req 
+ * @param {*} res 
+ */
+function testDeleteAdditionalPost(req, res) {
+    server.database.query("user", { "name": "Zun" }, function (error, results) {       
         var userid = server.getIdString(results[0]);
-        console.log("userid:" + userid);
-        // server.database.checkAdditionalValidate(userid, 20181225, 16, function(error){
-        //     server.respond(res, error);
-        // });
-        server.database.checkRepeatedValidate(userid, 5, 10, function(error){
+        console.log("userid:" + userid);       
+        server.database.deleteAdditionalPost(userid, 20181225, 16, function(error){
             server.respond(res, error);
-        })
+        });
     });
 }
+
+
+/**
+ * Test check the time confliction 
+ * Whether repeated post/application is valid
+ * @param {*} req 
+ * @param {*} res 
+ */
+function testCheckRepeatedValidate(req, res) {
+    server.database.query("user", { "name": "Li" }, function (error, results) {      
+        var userid = server.getIdString(results[0]);
+        console.log("userid:" + userid);       
+        server.database.checkRepeatedValidate(userid, 1, 8, function(error){
+            server.respond(res, error);
+        });
+    });
+}
+
+
+/**
+ * Test check the time confliction 
+ * Whether additional post/application is valid
+ * @param {*} req 
+ * @param {*} res 
+ */
+function testCheckAdditionalValidate(req, res) {
+    server.database.query("user", { "name": "Li" }, function (error, results) {      
+        var userid = server.getIdString(results[0]);
+        console.log("userid:" + userid);
+        server.database.checkAdditionalValidate(userid, 20181225, 16, function(error){
+            server.respond(res, error);
+        });
+    });
+}
+
 
 
 var date = new Date();
@@ -69,10 +125,20 @@ exports.initTestData = function (req, res) {
 var parameters = [];
 var functions = [];
 
+/**
+ * delete all data from conllection in database
+ * @param {*} collection 
+ * @param {*} func 
+ */
 function clearCollection(collection, func) {
     server.database.clearCollection(collection, func);
 }
 
+/**
+ * insert data with parameters
+ * @param {*} parameters 
+ * @param {*} func 
+ */
 function insert(parameters, func) {
     server.database.insert(parameters[0], parameters[1], function (error, count) {
         if (error !== null) {

@@ -43,7 +43,31 @@ exports.searchRepeatedPostsForCount = function(userID, semester, passengerNumber
     });
 }
 
+/**
+ * update availSeatsCount for each post result
+ * @param {*} availSeatsCount 
+ * @param {*} repeatedPost 
+ * @param {*} passengerNumber 
+ */
+function countOneRepPost(availSeatsCount, repeatedPost, passengerNumber) {
+    for(tStr in repeatedPost.availableSeats) {
+        var t = parseInt(tStr);
+        var day = Math.round(t / 100);//which weekday range[1,7]
+        var time = Math.round(t % 100); //depart time range[8,20] indicating from 8 am to 8pm
+        if(day < 1 || day > 7 || time < 8 || time > 20) {
+            return;
+        }
+        if(repeatedPost.availableSeats[tStr] >= passengerNumber) {
+            availSeatsCount[day-1][time-8] += 1;
+        }
+    }
+    return availSeatsCount;
+}
 
+
+/**
+ * user click on a time block, then search repeated post
+ */
 exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, passengerNumber, lat, long, range, func) {
     var minLat = lat - range;
     var maxLat = lat + range;
@@ -68,6 +92,14 @@ exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, p
     });
 }
 
+/**
+ * update postsList for each result
+ * @param {*} postsList 
+ * @param {*} day 
+ * @param {*} time 
+ * @param {*} repeatedPost 
+ * @param {*} passengerNumber 
+ */
 function collectRepeatedDriverResult(postsList, day, time, repeatedPost, passengerNumber) {
     for(tStr in repeatedPost.availableSeats) {
         var t = parseInt(tStr);
@@ -85,27 +117,6 @@ function collectRepeatedDriverResult(postsList, day, time, repeatedPost, passeng
     }
     return postsList;
 }
-
-exports.searchSinglePostsOnTimeBlock = function(userID, date, time, passengerNumber, lat, long, range, func) {
-    var minLat = lat - range;
-    var maxLat = lat + range;
-    var minLong = long - range;
-    var maxLong = long + range;
-    var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
-                "long": { "$gt": minLong, "$lt": maxLong },
-                "date":date,
-                "time":time,
-                "maxSeats":{"$gte": passengerNumber},
-                "userID":{ $ne: userID }};//do not get the user's own posts
-    server.database.query("driveradditionalpost", query, function(err, results){
-        if(err !== null) {
-            func(err, null);
-            return;
-        }
-        func(null, results);
-    });
-}
-
 
 /**
  * search in table driveradditionalPost for posts that qualifies the serach conditions
@@ -143,6 +154,8 @@ exports.searchSinglePostsForCount = function(userID, startDate, endDate, passeng
     });
 }
 
+
+
 /**
  * 
  * @param {*} availSeatsCount 
@@ -159,20 +172,56 @@ function countOneSinglePost(availSeatsCount, singlePost, passengerNumber) {
 }
 
 
-function countOneRepPost(availSeatsCount, repeatedPost, passengerNumber) {
-    for(tStr in repeatedPost.availableSeats) {
-        var t = parseInt(tStr);
-        var day = Math.round(t / 100);//which weekday range[1,7]
-        var time = Math.round(t % 100); //depart time range[8,20] indicating from 8 am to 8pm
-        if(day < 1 || day > 7 || time < 8 || time > 20) {
+/**
+ * user click on a time block, then search for single posts
+ */
+exports.searchSinglePostsOnTimeBlock = function(userID, date, time, passengerNumber, lat, long, range, func) {
+    var minLat = lat - range;
+    var maxLat = lat + range;
+    var minLong = long - range;
+    var maxLong = long + range;
+    var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
+                "long": { "$gt": minLong, "$lt": maxLong },
+                "date":date,
+                "time":time,
+                "maxSeats":{"$gte": passengerNumber},
+                "userID":{ $ne: userID }};//do not get the user's own posts
+    server.database.query("driveradditionalpost", query, function(err, results){
+        if(err !== null) {
+            func(err, null);
             return;
         }
-        if(repeatedPost.availableSeats[tStr] >= passengerNumber) {
-            availSeatsCount[day-1][time-8] += 1;
-        }
-    }
-    return availSeatsCount;
+        func(null, results);
+    });
 }
+
+
+//{ userID: 0, driverPostID: [], day: 1, time: 8, passengerNumber: 1, status: [0] };
+exports.repeatedApply = function(userID, postIDs, day, time, passengerNumber, func){
+    var status = [];
+    var i;
+    for (i = 0; i < postIDs.length; i++) {
+        status.push(0);
+    }
+    var data = {"userID":userID, "driverPostID":postIDs, "day":day, "time":time, "passengerNumber":passengerNumber, "status":status };
+    server.database.insertReturnId("repeatedapplication", data, function(err, insertId){
+        func(err, insertId, postIDs, status);
+    });
+}
+
+
+exports.singleApply = function(userID, postIDs, passengerNumber, func){
+    var status = [];
+    var i;
+    for (i = 0; i < postIDs.length; i++) {
+        status.push(0);
+    }
+    var data = {"userID":userID, "driverPostID":postIDs, "passengerNumber":passengerNumber, "status":status };
+    server.database.insertReturnId("additionalapplication", data, function(err, insertId){
+        func(err, insertId, postIDs, status);
+    });
+}
+
 
 /**
  * a number representing a date transformed to yyyy-MM-dd format
@@ -226,6 +275,8 @@ function toDate(timestamp) {
     // var mm = time.getMinutes();
     // var s = time.getSeconds();
 }
+
+
 
 function getTodayDate() {
     return toDate(Date.now());

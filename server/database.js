@@ -23,7 +23,7 @@ function getDB() {
 }
 
 /**
- * Insets a record to database
+ * Inserts a record to database
  * @param collectionName {string} The name of the collection
  * @param data {Object} The record, if successfully inserted, the _id will be added to the data
  * @param func {function} Callback. function(errorCode err)
@@ -41,8 +41,21 @@ exports.insert = function (collectionName, data, func) {
     });
 }
 
+exports.insertReturnId = function (collectionName, data, func) {
+    getDB().collection(collectionName).insertOne(data, function (err, res) {
+        if (err === null) {
+            data._id = res.insertedId;
+            server.logger.info("insert into collection " + collectionName + " with id " + data._id.toString());
+            func(null, data._id);
+        } else {
+            server.logger.error("insert to db error: " + err);
+            func(server.errorCode.databaseError, null);
+        }
+    });
+}
+
 /**
- * Insets some records to database
+ * Inserts some records to database
  * @param collectionName {string} The name of the collection
  * @param data {array} The records
  * @param func {function} Callback. function(errorCode err, int insertedCount)
@@ -75,6 +88,11 @@ exports.query = function (collectionName, query, func) {
     });
 }
 
+/**
+ * Delete the all data form a table
+ * @param collectionName {string} The name of the collection
+ * @param func {Function} The callback. Function(errorCode error)
+ */
 exports.clearCollection = function (collectionName, func) {
     getDB().collection(collectionName).deleteMany({}, function (err, result) {
         if (err === null) {
@@ -83,6 +101,26 @@ exports.clearCollection = function (collectionName, func) {
         func();
     });
 }
+
+/**
+ * Delete the one data form a table
+ * @param collectionName {string} The name of the collection
+ * @param query {Object} The query object for mongodb
+ * @param func {Function} The callback. Function(errorCode error, int deleteCount)
+ */
+exports.delete = function (collectionName, query, func) {
+    getDB().collection(collectionName).deleteOne(query, function (err, result) {
+        if (err === null) {
+            console.log("delete " + result.result.n + " records");
+            func(null, result.result.n);
+        }
+        else{
+            func(server.errorCode.databaseError, 0);
+        }
+        
+    });
+}
+
 
 /**
  * Checks if the user is valid
@@ -346,6 +384,10 @@ exports.checkAdditionalValidate = function (userID, date, time, func) {
         }
     });
 }
+
+
+
+
 /**
  * Check time confliction（whether driver/passanger repeated is valid）
  * @param userID {number} The id of user
@@ -360,13 +402,13 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
     var t = 100 * day + time;
     var key = "availableSeats." + t;
     console.log("key:" + key);
-    //cursor = db.inventory.find({"size.uom": "cm"})
-    //# 查询所有文档中，没有item字段的记录
-    //cursor = db.inventory.find({"item": {"$exists": False}})
 
     //mongodb is ok, but can not find by using this code
-    //> db.driverrepeatedpost.find({"availableSeats.108": {"$exists": true},"userID":"5c070e1e974f84637bb083ba"})
-    exports.query("driverrepeatedpost", { "userID": userID, key: { "$exists": true } }, function (err, rpPosts) {
+    //> db.driverrepeatedpost.find({"availableSeats.108": {"$exists": true},"userID":"5c0f0319244cf10ab296aa84"})
+    var dict = { "userID": userID};
+    dict[key] = { "$exists": true };
+    console.log(dict);
+    exports.query("driverrepeatedpost", dict, function (err, rpPosts) {
         if (err !== null) {
             func(err);
             return;
@@ -385,9 +427,195 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
                 console.log("rpApplications:" + rpApplications);
                 if (rpApplications.length != 0) {
                     func(server.errorCode.timeConflict);
+                    return;
                 }
                 func(null);
             });
         }
     });
+}
+
+
+/**
+ * Delete data from driveradditionalpost
+ * @param userID {number} The id of user
+ * @param date {number} The date (eg. 20180810)
+ * @param time {number} The time (from 8 to 20)
+ * @param func {Function} The callback. Function(int deleteLine)
+ */
+exports.deleteAdditionalPost = function (postID, func) {
+    exports.delete("driveradditionalpost", { "_id": postID}, function(err, result){
+        if (err != null) {
+            func();
+                
+        }
+    });
+    //search { "driverPostID": { $in: postIds } }
+    exports.query("additionalapplication", { "driverPostID": { $in: postID }}, function (err, addApps) {
+        if (err != null) {
+            func();
+            return;
+        }
+        //exsits
+        if(additionalapplication.length != 0){
+            //update
+            var n = addApps.postID.length;
+            for(i = 0; i < n; i++){
+                if (addApps.postID[i] = postID) {
+                    ddApps.postID[i] = addApps.postID[n-1];
+                    addApps.status[i] = addApps.status[n-1];
+                    n--;
+                }
+            } 
+        exports.update("additionalapplication", {}, set, func); 
+        }
+        //not exists
+        else{
+            func(result);
+        }
+    });
+}
+
+
+/**
+ * Delete data from driverrepeatedpost
+ * @param userID {number} The id of user
+ * @param day {number} The day (from 1 to 7)
+ * @param time {number} The time (from 8 to 20)
+ * @param func {Function} The callback. Function(int deleteLine)
+ */
+exports.deleteRepeatedPost = function (postID, func) {
+    
+    exports.delete("driverrepeatedpost", {"_id": postID}, function(err, result){
+        if (err != null) {
+            func();
+        }
+        else{
+            func(result);
+        }
+    });
+    //search { "driverPostID": { $in: postIds } }
+    exports.query("additionalapplication", { "driverPostID": { $in: postID }}, function (err, addApps) {
+        if (err != null) {
+            func();
+            return;
+        }
+        //exsits
+        if(additionalapplication.length != 0){
+            //update
+            var n = addApps.postID.length;
+            for(i = 0; i < n; i++){
+                if (addApps.postID[i] = postID) {
+                    ddApps.postID[i] = addApps.postID[n-1];
+                    addApps.status[i] = addApps.status[n-1];
+                    n--;
+                }
+            } 
+        exports.update("additionalapplication", {}, set, func); 
+        }
+        //not exists
+        else{
+            func(result);
+        }
+    });
+    
+}
+
+/**
+ * Delete data from repeatedapplication
+ * @param userID {number} The id of user
+ * @param day {number} The day (from 1 to 7)
+ * @param time {number} The time (from 8 to 20)
+ * @param func {Function} The callback. Function(int deleteLine)
+ */
+exports.deleteRepeatedApplication = function (appID, func) {
+    exports.query("repeatedapplication", { "_id": appID}, function (err, rpApps) {
+        if (err !== null) {
+            func();
+            return;
+        }
+
+        if(rpApps.length != 0){
+            var num = rpApps.passengerNumber;
+            exports.delete("repeatedapplication", { "_id": appID}, function(err, result){
+                if (err != null) {
+                    func();
+                    return;
+                }
+                else{
+                    func(result);
+                }
+            });
+            var ids = [];
+            var n = rpApps.status.length;
+            for(i = 0; i < n; i++){
+                if(rpApps.status[i] == 1){
+                    ids.push(server.stringToID(rpApps.driverPostID[i]));
+                }
+            }
+
+            //availableSeats: {"110":4, "310":4} value + num
+            exports.update("driverrepeatedpost", { "_id": { $in: ids} }, num, function(err, result){
+                if (err != null) {
+                    func();
+                    return;
+                }
+            });
+        }
+        else{
+            func(0);
+            return; 
+        }
+    });    
+      
+}
+
+
+/**
+ * Delete data from repeatedapplication
+ * @param userID {number} The id of user
+ * @param day {number} The day (from 1 to 7)
+ * @param time {number} The time (from 8 to 20)
+ * @param func {Function} The callback. Function(int deleteLine)
+ */
+exports.deleteAdditionalApplication = function (appID, func) {
+    exports.query("additionalapplication", { "_id": appID}, function (err, addApps) {
+        if (err !== null) {
+            func();
+            return;
+        }
+
+        if(addApps.length != 0){
+            var num = addApps.passengerNumber;
+            exports.delete("repeatedapplication", { "_id": appID}, function(err, result){
+                if (err != null) {
+                    func();
+                    return;
+                }
+                else{
+                    func(result);
+                }
+            });
+            var ids = [];
+            var n = addApps.status.length;
+            for(i = 0; i < n; i++){
+                if(addApps.status[i] == 1){
+                    ids.push(server.stringToID(rpPosts.driverPostID[i]));
+                }
+            }
+
+            //availableSeats: {"110":4, "310":4} value + num
+            exports.update("driverrepeatedpost", { "_id": { $in: ids} }, num, function(err, result){
+                if (err != null) {
+                    func();
+                    return;
+                }
+            });
+        }
+        else{
+            func(0);
+            return; 
+        }
+    });    
+      
 }

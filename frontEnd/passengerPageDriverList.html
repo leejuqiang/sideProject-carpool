@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="css/color.css" />
+        <link rel="stylesheet" type="text/css" href="css/login.css" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="css/driverlist.css">
+        <script src="driverlist.js"></script>
+    </head>
+    <body>
+            <!-- align="center" -->
+        <div align="center">
+        <div class="line" >
+            <div class="date">
+                <p id="date">Date:</p>
+            </div>
+            <div class="day">
+                <p id="day">Day:</p>
+            </div>
+            <div class="time">
+                <p id="time">Time:</p>
+            </div>
+        </div>
+        
+        <form action="" method="get">
+                
+            <div align="center">
+                <table id="tbl" class="tb" cellpadding="10" cellspacing="0">
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Driver</th>
+                        <th>Available Seats/Max Seats</th>
+                    </tr>
+                    
+                    <tr class="alt">
+                        <td><input type="checkbox" name="chb[]" onclick=""/></td>
+                        <td>Bob</td>                        
+                        <td>3/4</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" name="chb[]" onclick=""/></td>
+                        <td>Amy</td>                        
+                        <td>1/4</td>
+                    </tr>
+                    <tr class="alt">
+                        <td><input type="checkbox" name="chb[]" onclick=""/></td>
+                        <td>Lucy</td>                        
+                        <td>0/4</td>
+                    </tr>    
+                </table>  
+            </div> 
+            <div class="bt">
+                <button type="button" onclick="selectAll(this)" class="b1" id="all">Select All</button>
+                <input type="submit" value="Submit" class="b2"/>
+                <button type="button" onclick="getValueWhenChecked()">check</button>
+
+            </div>     
+        </form>
+        
+    </div>
+
+    
+    </body>
+</html>
