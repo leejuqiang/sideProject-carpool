@@ -2,7 +2,7 @@ var server = require("./server");
 
 
 function generateEmptyAvailSeatsCount() {
-    var BLOCKS = 12;
+    var BLOCKS = 13;
     var seatsCount = [[],[],[],[],[],[],[]];//monday, tuesday, ... Saturday,Sunday
     var day;
     for (day = 0; day<=6; day++) {
