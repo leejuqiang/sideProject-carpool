@@ -17,7 +17,7 @@ exports.onRepeatedPanelRequest = function(req, res) {
     server.database.getUser(req.body.userID, req.body.sessionID, function(user, error) {
         if(error === null) {
             var cond = req.body.searchCondition;
-            dbPsg.searchRepeatedPostsForCount(req.body.userID, cond.semester, cond.passengerNumber, cond.lat, cond.long, cond.range,function(err, availSeatsCount){
+            dbPsg.searchRepeatedPostsForCount(req.body.userID, cond.semester, cond.passengerNumber, cond.lat, cond.long, cond.range, cond.type, function(err, availSeatsCount){
                 if(err !== null) {
                     returnBody.error = server.errorCode.databaseError;
                     server.respond(res, returnBody);
@@ -44,7 +44,7 @@ exports.onSinglePanelRequest = function(req, res) {
     server.database.getUser(req.body.userID, req.body.sessionID, function(user, error) {
         if(error === null) {
             var cond = req.body.searchCondition;
-            dbPsg.searchSinglePostsForCount(req.body.userID, cond.startDate, cond.endDate, cond.passengerNumber, cond.lat, cond.long, cond.range,function(err, availSeatsCount){
+            dbPsg.searchSinglePostsForCount(req.body.userID, cond.startDate, cond.endDate, cond.passengerNumber, cond.lat, cond.long, cond.range,cond.type, function(err, availSeatsCount){
                 if(err !== null) {
                     returnBody.error = server.errorCode.databaseError;
                     server.respond(res, returnBody);
@@ -71,7 +71,7 @@ exports.onRepeatedDriverList = function(req, res) {
     server.database.getUser(req.body.userID, req.body.sessionID, function(user, error) {
         if(error === null) {
             var cond = req.body.searchCondition;
-            dbPsg.searchRepeatedPostsOnTimeBlock(req.body.userID, cond.semester, cond.day, cond.time, cond.passengerNumber, cond.lat, cond.long, cond.range,function(err, postsList){
+            dbPsg.searchRepeatedPostsOnTimeBlock(req.body.userID, cond.semester, cond.day, cond.time, cond.passengerNumber, cond.lat, cond.long, cond.range,cond.type, function(err, postsList){
                 if(err !== null) {
                     returnBody.error = server.errorCode.databaseError;
                     server.respond(res, returnBody);

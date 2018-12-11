@@ -18,7 +18,7 @@ function generateEmptyAvailSeatsCount() {
  * search in table driverrepeatedPost for posts that qualifies the serach conditions
  * do not return posts which belongs to the user represented by the userID
  */
-exports.searchRepeatedPostsForCount = function(userID, semester, passengerNumber, lat, long, range, func) {
+exports.searchRepeatedPostsForCount = function(userID, semester, passengerNumber, lat, long, range, type, func) {
     var minLat = lat - range;
     var maxLat = lat + range;
     var minLong = long - range;
@@ -27,7 +27,8 @@ exports.searchRepeatedPostsForCount = function(userID, semester, passengerNumber
                 "long": { "$gt": minLong, "$lt": maxLong },
                 "semester":semester,
                 "maxSeats":{"$gte": passengerNumber},
-                "userID":{ $ne: userID }};//do not get the user's own posts
+                "userID":{ $ne: userID },
+                "type": type};//do not get the user's own posts
     server.database.query("driverrepeatedpost", query, function(err, results){
         if(err !== null) {
             func(err, null);
@@ -68,7 +69,7 @@ function countOneRepPost(availSeatsCount, repeatedPost, passengerNumber) {
 /**
  * user click on a time block, then search repeated post
  */
-exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, passengerNumber, lat, long, range, func) {
+exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, passengerNumber, lat, long, range, type, func) {
     var minLat = lat - range;
     var maxLat = lat + range;
     var minLong = long - range;
@@ -77,7 +78,9 @@ exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, p
                 "long": { "$gt": minLong, "$lt": maxLong },
                 "semester":semester,
                 "maxSeats":{"$gte": passengerNumber},
-                "userID":{ $ne: userID }};//do not get the user's own posts
+                "userID":{ $ne: userID },
+                "type": type};//do not get the user's own posts
+    var query = {};
     server.database.query("driverrepeatedpost", query, function(err, results){
         if(err !== null) {
             func(err, null);
@@ -114,6 +117,7 @@ function collectRepeatedDriverResult(postsList, day, time, repeatedPost, passeng
             }
             break;
         }
+        postsList.push(repeatedPost);
     }
     return postsList;
 }
@@ -122,7 +126,7 @@ function collectRepeatedDriverResult(postsList, day, time, repeatedPost, passeng
  * search in table driveradditionalPost for posts that qualifies the serach conditions
  * do not return posts which belongs to the user represented by the userID
  */
-exports.searchSinglePostsForCount = function(userID, startDate, endDate, passengerNumber, lat, long, range, func) {
+exports.searchSinglePostsForCount = function(userID, startDate, endDate, passengerNumber, lat, long, range, type, func) {
     var minLat = lat - range;
     var maxLat = lat + range;
     var minLong = long - range;
@@ -138,7 +142,8 @@ exports.searchSinglePostsForCount = function(userID, startDate, endDate, passeng
                 "long": { "$gt": minLong, "$lt": maxLong },
                 "date": { "gte": startDate, "$lte": endDate},
                 "maxSeats":{"$gte": passengerNumber},
-                "userID":{ $ne: userID }};//do not get the user's own posts
+                "userID":{ $ne: userID },
+                "type":type};//do not get the user's own posts
     server.database.query("driveradditionalpost", query, function(err, results){
         if(err !== null) {
             func(err, null);
@@ -175,7 +180,7 @@ function countOneSinglePost(availSeatsCount, singlePost, passengerNumber) {
 /**
  * user click on a time block, then search for single posts
  */
-exports.searchSinglePostsOnTimeBlock = function(userID, date, time, passengerNumber, lat, long, range, func) {
+exports.searchSinglePostsOnTimeBlock = function(userID, date, time, passengerNumber, lat, long, range, type, func) {
     var minLat = lat - range;
     var maxLat = lat + range;
     var minLong = long - range;
@@ -185,7 +190,8 @@ exports.searchSinglePostsOnTimeBlock = function(userID, date, time, passengerNum
                 "date":date,
                 "time":time,
                 "maxSeats":{"$gte": passengerNumber},
-                "userID":{ $ne: userID }};//do not get the user's own posts
+                "userID":{ $ne: userID },
+                "type": type };//do not get the user's own posts
     server.database.query("driveradditionalpost", query, function(err, results){
         if(err !== null) {
             func(err, null);

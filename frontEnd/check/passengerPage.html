@@ -137,7 +137,7 @@ $(function () {
                     // "userID":localStorage.getItem("userId"),
                     "userID":parent.runTimeData.user.userId,
                     // "sessionID":localStorage.getItem("sessionID"),
-                    "sessionID":lparent.runTimeData.user.session,
+                    "sessionID":parent.runTimeData.user.session,
                     "searchCondition":{
                             "semester":"fall",
                             "passengerNumber":2,
@@ -163,7 +163,7 @@ $(function () {
                     // "userID":localStorage.getItem("userId"),
                     "userID":parent.runTimeData.user.userId,
                     // "sessionID":localStorage.getItem("sessionID"),
-                    "sessionID":lparent.runTimeData.user.session,
+                    "sessionID":parent.runTimeData.user.session,
                     "postIDs":["5c006444ed1026268a0a5fe5"],
                     "day":day,
                     "time":time,
@@ -188,26 +188,27 @@ $(function () {
                     // "userID":localStorage.getItem("userId"),
                     "userID":parent.runTimeData.user.userId,
                     // "sessionID":localStorage.getItem("sessionID"),
-                    "sessionID":lparent.runTimeData.user.session,
+                    "sessionID":parent.runTimeData.user.session,
                     "searchCondition":
                     {
-                        "semester":"fall",
+                        "semester":"1",
                         "day":day,
                         "time":time,
-                        "passengerNumber":2,
+                        "passengerNumber":1,
                         "lat":123,
                         "long":456,
-                        "range":10
+                        "range":100
                     }
                 }).then(function (resp) {
                     console.log('fetch repeated OK');
                     resp.json().then(function (result) {
                         console.log(result.postsList);
+                        openDialog(result.postsList);
                     });
                 }, function (resp) {
                     alert('failed to fetch repeated driver post list.');
                 });
-                openDialog();
+                
             },
             change: function (e) {
                 var
