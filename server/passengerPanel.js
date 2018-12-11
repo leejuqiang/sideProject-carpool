@@ -137,3 +137,26 @@ exports.onRepeatedApplication = function(req, res) {
         }
     });
 }
+
+
+exports.onSingleApplication = function(req, res) {
+    returnBody = { "error": server.errorCode.ok };
+    server.database.getUser(req.body.userID, req.body.sessionID, function(user, error) {
+        if(error === null) {
+            dbPsg.singleApply(req.body.userID, req.body.postIDs, req.body.passengerNumber, function(err, insertId, postIDs, status){
+                if(err !== null) {
+                    returnBody.error = server.errorCode.databaseError;
+                    server.respond(res, returnBody);
+                }else {
+                    returnBody.applicationID = insertId;
+                    returnBody.postIDs = postIDs;
+                    returnBody.status = status;
+                    server.respond(res, returnBody);
+                }
+            });
+        }else{
+            returnBody.error = server.errorCode.sessionInvalid;
+            server.respond(res, returnBody);
+        }
+    });
+}

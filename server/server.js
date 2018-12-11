@@ -56,6 +56,7 @@ app.post("/singlePanel", require("./passengerPanel").onSinglePanelRequest);
 app.post("/repeatedDriverList", require("./passengerPanel").onRepeatedDriverList);
 app.post("/singleDriverList", require("./passengerPanel").onSingleDriverList);
 app.post("/repeatedApply", require("./passengerPanel").onRepeatedApplication);
+app.post("/singleApply", require("./passengerPanel").onSingleApplication);
 
 app.get("/driverPanel.html", require("./page").onPage);
 app.get("/passengerPage.html", require("./page").onPage);

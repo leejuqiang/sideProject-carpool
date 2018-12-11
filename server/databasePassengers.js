@@ -210,6 +210,19 @@ exports.repeatedApply = function(userID, postIDs, day, time, passengerNumber, fu
 }
 
 
+exports.singleApply = function(userID, postIDs, passengerNumber, func){
+    var status = [];
+    var i;
+    for (i = 0; i < postIDs.length; i++) {
+        status.push(0);
+    }
+    var data = {"userID":userID, "driverPostID":postIDs, "passengerNumber":passengerNumber, "status":status };
+    server.database.insertReturnId("additionalapplication", data, function(err, insertId){
+        func(err, insertId, postIDs, status);
+    });
+}
+
+
 /**
  * a number representing a date transformed to yyyy-MM-dd format
  * @param {*} date 
