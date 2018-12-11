@@ -19,6 +19,13 @@ function generateEmptyAvailSeatsCount() {
  * do not return posts which belongs to the user represented by the userID
  */
 exports.searchRepeatedPostsForCount = function(userID, semester, passengerNumber, lat, long, range, type, func) {
+    var semester =  semester + "";
+    var range =  parseFloat(range);
+    var passengerNumber =  parseInt(passengerNumber);
+    var type =  parseInt(type);
+    
+    console.log(semester+ " " +range + " "+passengerNumber + " " +type);
+
     var minLat = lat - range;
     var maxLat = lat + range;
     var minLong = long - range;
@@ -70,24 +77,28 @@ function countOneRepPost(availSeatsCount, repeatedPost, passengerNumber) {
  * user click on a time block, then search repeated post
  */
 exports.searchRepeatedPostsOnTimeBlock = function(userID, semester, day, time, passengerNumber, lat, long, range, type, func) {
+    var semester =  semester + "";
+    var range =  parseFloat(range);
+    var passengerNumber =  parseInt(passengerNumber);
+    var type =  parseInt(type);
+
     var minLat = lat - range;
+    
     var maxLat = lat + range;
+    console.log(maxLat + "fdsfdsfdfsdfs");
     var minLong = long - range;
     var maxLong = long + range;
-    // console.log(semester);
-    // console.log(day);
-    // console.log(time);
-    // console.log(passengerNumber);
-    // var query = {};
-    console.log(minLat + " " + maxLat + " | " + minLong + " " + maxLong);
-    var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
-                "long": { "$gt": minLong, "$lt": maxLong }};//do not get the user's own posts
     // var query = { "lat": { "$gt": minLat, "$lt": maxLat }, 
     //             "long": { "$gt": minLong, "$lt": maxLong },
-    //             "semester":semester,
-    //             "maxSeats":{"$gte": passengerNumber},
-    //             "userID":{ $ne: userID },
     //             "type": type};//do not get the user's own posts
+    
+    var query = { 
+                "lat": { "$gt": minLat, "$lt": maxLat }, 
+                "long": { "$gt": minLong, "$lt": maxLong },
+                "semester":"1",
+                "maxSeats":{"$gte": passengerNumber},
+                "userID":{ $ne: userID },
+                "type": type};//do not get the user's own posts
     server.database.query("driverrepeatedpost", query, function(err, results){
         console.log(results.length);
         if(err !== null) {

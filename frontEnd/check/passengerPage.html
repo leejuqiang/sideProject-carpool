@@ -15,7 +15,10 @@
     <script src="/index.js"></script>
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
     </script>
+    <script src="../driverlist.js"></script>
     <script src="../clickShowDriverList.js"></script>
+    <script src="../driverlist.js"></script>
+    
     <link rel="stylesheet" href="../css/window.css">
     <style>
             #map {
@@ -125,7 +128,13 @@ $(function () {
             header: createHeader(),
             rows: createRows(),
             selectedRowIndex: 0,
-            selectedColIndex: 0
+            selectedColIndex: 0,
+            semester: "1",
+            passengerNumber: 1,
+            range: 10,
+            type: 0,
+            startDate:20181211,
+            endDate:20181220
         },
         methods: {
             refresh: function () {
@@ -133,17 +142,21 @@ $(function () {
                 console.log("sessionID:" + parent.runTimeData.user.session);
                 var that = this;
                 //request data from server
+                var lc = getSelectedLocation();
+                var lat = lc.lat;
+                var long = lc.lng;
                 that.$resource('/repeatedPanel').save({
                     // "userID":localStorage.getItem("userId"),
                     "userID":parent.runTimeData.user.userId,
                     // "sessionID":localStorage.getItem("sessionID"),
                     "sessionID":parent.runTimeData.user.session,
                     "searchCondition":{
-                            "semester":"fall",
-                            "passengerNumber":2,
-                            "lat":123,
-                            "long":456,
-                            "range":10
+                            "semester":this.semester,
+                            "passengerNumber":this.passengerNumber,
+                            "lat":lat,
+                            "long":long,
+                            "range":this.range,
+                            "type": this.type
                         }
                 }).then(function (resp) {
                     resp.json().then(function (result) {
@@ -159,15 +172,19 @@ $(function () {
                 //post data to server
                 var time = this.selectedRowIndex;
                 var day = this.selectedColIndex;
+                var passnum = this.passengerNumber;
+                console.log(postIDs);
+                console.log("------");
                 this.$resource('/repeatedApply').save({
                     // "userID":localStorage.getItem("userId"),
                     "userID":parent.runTimeData.user.userId,
                     // "sessionID":localStorage.getItem("sessionID"),
                     "sessionID":parent.runTimeData.user.session,
-                    "postIDs":["5c006444ed1026268a0a5fe5"],
+                    // "postIDs":["5c006444ed1026268a0a5fe5"],
+                    "postIDs":postIDs,
                     "day":day,
                     "time":time,
-                    "passengerNumber":1
+                    "passengerNumber":parseInt(passnum),
                 }).then(function (resp) {
                     console.log('saved ok.');
                     resp.json().then(function (result) {
@@ -184,6 +201,10 @@ $(function () {
                 var day = cell.col;
                 resetAllCellsColor(this.rows);
                 cell.color = "yellow";
+                var lc = getSelectedLocation();
+                var lat = lc.lat;
+                var long = lc.lng;
+                var passnum = this.passengerNumber;
                 this.$resource('/repeatedDriverList').save({
                     // "userID":localStorage.getItem("userId"),
                     "userID":parent.runTimeData.user.userId,
@@ -191,19 +212,25 @@ $(function () {
                     "sessionID":parent.runTimeData.user.session,
                     "searchCondition":
                     {
-                        "semester":"1",
+                        "semester":this.semester,
                         "day":day,
                         "time":time,
-                        "passengerNumber":1,
-                        "lat":37,
-                        "long":122,
-                        "range":100
+                        "passengerNumber":this.passengerNumber,
+                        "lat":lat,
+                        "long":long,
+                        "range":this.range,
+                        "type": this.type
                     }
                 }).then(function (resp) {
                     console.log('fetch repeated OK');
                     resp.json().then(function (result) {
-                        console.log(result.postsList);
-                        openDialog(result.postsList);
+                        // console.log("----");
+                        // console.log(result.postsList);
+                        // console.log(day);
+                        // console.log(time);
+                        // console.log(parent.runTimeData.user.userId);
+                        // console.log("----");
+                        openDialog(parent.runTimeData.user.userId,result.postsList, day, time, passnum);
                     });
                 }, function (resp) {
                     alert('failed to fetch repeated driver post list.');
@@ -273,7 +300,6 @@ function showSingle() {
     document.getElementById("SingleApplicationFilter").style.display = "block";
 }
 
-
 </script>
 
 </head>
@@ -293,17 +319,28 @@ function showSingle() {
             </div>
 
             <div class="tabcontent col-sm-6">
-                <div id="RepeatedApplicationFilter">
-                        <span class="glyphicon glyphicon-th-list"></span> Available Drivers' repeated Posts <br/>
-                        <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
-                        <button id="cmd-apply" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> Apply</button>
+                <div id="sheet" >
+                    <div id="RepeatedApplicationFilter">
+                            <span class="glyphicon glyphicon-th-list"></span> Available Drivers' repeated Posts <br/>
+                            <p>semester: </p> <input type="text" v-model="semester"></input>
+                            <p>passengerNumber: </p> <input type="text" v-model="passengerNumber"></input>
+                            <p>range: </p> <input type="text" v-model="range"></input>
+                            <p>type: </p> <input type="text" v-model="type"></input>
+                            <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
+                            <button id="cmd-apply" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> Apply</button>
+                        </div>
+                        <div id="SingleApplicationFilter">
+                                <span class="glyphicon glyphicon-th-list"></span> Available Drivers' single Posts <br/>
+                                <p>startDate: </p> <input type="text" v-model="startDate"></input>
+                                <p>endDate: </p> <input type="text" v-model="endDate"></input>
+                                <p>range: </p> <input type="text" v-model="range"></input>
+                                <p>type: </p> <input type="text" v-model="type"></input>
+                            <span class="glyphicon glyphicon-th-list"></span> Available Drivers' single Posts <br/>
+                            <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> Refresh</button>
+                            <button id="cmd-apply" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> Apply</button>
                     </div>
-                    <div id="SingleApplicationFilter">
-                        <span class="glyphicon glyphicon-th-list"></span> Available Drivers' single Posts <br/>
-                        <button id="cmd-refresh" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-refresh"></i> xx</button>
-                        <button id="cmd-apply" type="button" class="btn btn-default navbar-btn"><i class="glyphicon glyphicon-send"></i> yy</button>
-                </div>
-                    <table id="sheet" class="table table-bordered">
+                    <table class="table table-bordered">
+                        
                         <thead>
                             <tr>
                                 <th v-for="cell in header" v-on:click="focus(cell)" v-text="cell.text"></th>
@@ -315,6 +352,7 @@ function showSingle() {
                             </tr>
                         </tbody>
                     </table>
+                </div>
             </div>
         </div>
     </div>
