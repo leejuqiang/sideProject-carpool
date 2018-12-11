@@ -4,21 +4,41 @@ exports.onRequest = function (req, res) {
     server.database.query("user", { "name": "Li" }, function (error, results) {
         server.respond(res, 200, server.getIdString(results[0]));
     });
+
 }
 
-function testCheckTimeConfliction(collection, func) {
+/**
+ * Test check the time confliction 
+ * Whether repeated post/application is valid
+ */
+function testCheckRepeatedValidate(req, res) {
+
     server.database.query("user", { "name": "Li" }, function (error, results) {
-        // server.respond(res, 200, server.getIdString(results[0]));
+       
         var userid = server.getIdString(results[0]);
         console.log("userid:" + userid);
-        // server.database.checkAdditionalValidate(userid, 20181225, 16, function(error){
-        //     server.respond(res, error);
-        // });
-        server.database.checkRepeatedValidate(userid, 5, 10, function(error){
+        
+        server.database.checkRepeatedValidate(userid, 1, 8, function(error){
             server.respond(res, error);
-        })
+        });
     });
 }
+/**
+ * Test check the time confliction 
+ * Whether additional post/application is valid
+ */
+function testCheckAdditionalValidate(req, res) {
+
+    server.database.query("user", { "name": "Li" }, function (error, results) {
+       
+        var userid = server.getIdString(results[0]);
+        console.log("userid:" + userid);
+        server.database.checkAdditionalValidate(userid, 20181225, 16, function(error){
+            server.respond(res, error);
+        });
+    });
+}
+
 
 
 var date = new Date();
