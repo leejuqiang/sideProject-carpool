@@ -10,12 +10,12 @@ exports.onRequest = function (req, res) {
                     server.database.getUserPassengerInfo(user, idMap, function (error) {
                         if (error === null) {
                             var postIds = [];
-                            for (var app in user.post.repeatedPost) {
-                                postIds.push(app._id);
+                            for (var i = 0; i < user.post.repeatedPost.length; ++i) {
+                                postIds.push(server.getIdString(user.post.repeatedPost[i]));
                             }
                             var addPostIds = [];
-                            for (var app in user.post.addPost) {
-                                addPostIds.push(app._id);
+                            for (var i = 0; i < user.post.addPost.length; ++i) {
+                                addPostIds.push(server.getIdString(user.post.addPost[i]));
                             }
                             server.database.getApplicationForUser(user, idMap, postIds, addPostIds, function (err) {
                                 if (err !== null) {
