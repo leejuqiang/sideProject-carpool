@@ -15,6 +15,8 @@
     <script src="/index.js"></script>
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
     </script>
+    <script src="../clickShowDriverList.js"></script>
+    <link rel="stylesheet" href="../css/window.css">
     <style>
             #map {
             /* height: 50%; */
@@ -127,13 +129,15 @@ $(function () {
         },
         methods: {
             refresh: function () {
-                console.log("userId:" + localStorage.getItem("userId"));
-                console.log("sessionID:" + localStorage.getItem("sessionID"));
+                console.log("userId:" + parent.runTimeData.user.userId);
+                console.log("sessionID:" + parent.runTimeData.user.session);
                 var that = this;
                 //request data from server
                 that.$resource('/repeatedPanel').save({
-                    "userID":localStorage.getItem("userId"),
-                    "sessionID":localStorage.getItem("sessionID"),
+                    // "userID":localStorage.getItem("userId"),
+                    "userID":parent.runTimeData.user.userId,
+                    // "sessionID":localStorage.getItem("sessionID"),
+                    "sessionID":lparent.runTimeData.user.session,
                     "searchCondition":{
                             "semester":"fall",
                             "passengerNumber":2,
@@ -156,8 +160,10 @@ $(function () {
                 var time = this.selectedRowIndex;
                 var day = this.selectedColIndex;
                 this.$resource('/repeatedApply').save({
-                    "userID": localStorage.getItem("userId"),
-                    "sessionID":localStorage.getItem("sessionID"),
+                    // "userID":localStorage.getItem("userId"),
+                    "userID":parent.runTimeData.user.userId,
+                    // "sessionID":localStorage.getItem("sessionID"),
+                    "sessionID":lparent.runTimeData.user.session,
                     "postIDs":["5c006444ed1026268a0a5fe5"],
                     "day":day,
                     "time":time,
@@ -174,8 +180,34 @@ $(function () {
             focus: function (cell) {
                 this.selectedRowIndex = cell.row;
                 this.selectedColIndex = cell.col;
+                var time = cell.row;
+                var day = cell.col;
                 resetAllCellsColor(this.rows);
                 cell.color = "yellow";
+                this.$resource('/repeatedDriverList').save({
+                    // "userID":localStorage.getItem("userId"),
+                    "userID":parent.runTimeData.user.userId,
+                    // "sessionID":localStorage.getItem("sessionID"),
+                    "sessionID":lparent.runTimeData.user.session,
+                    "searchCondition":
+                    {
+                        "semester":"fall",
+                        "day":day,
+                        "time":time,
+                        "passengerNumber":2,
+                        "lat":123,
+                        "long":456,
+                        "range":10
+                    }
+                }).then(function (resp) {
+                    console.log('fetch repeated OK');
+                    resp.json().then(function (result) {
+                        console.log(result.postsList);
+                    });
+                }, function (resp) {
+                    alert('failed to fetch repeated driver post list.');
+                });
+                openDialog();
             },
             change: function (e) {
                 var
@@ -250,7 +282,8 @@ function showSingle() {
     <button class="tablink" onclick="showSingle()">SingleApplication</button>
     
     <div class="container">
-            
+            <div id="light" class="white_content"></div> 
+            <div id="fade" class="black_overlay"></div> 
         <div class="row">
             <div class="col-sm-6">
                     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
