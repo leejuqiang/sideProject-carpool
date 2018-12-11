@@ -11,8 +11,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="css/driverlist.css">
         <script src="driverlist.js"></script>
+        <script src="clickShowDriverList.js"></script>
     </head>
-    <body>
+    <body onload="initDriverListWindow()">
             <!-- align="center" -->
         <div align="center">
         <div class="line" >
@@ -36,28 +37,16 @@
                         <th>Driver</th>
                         <th>Available Seats/Max Seats</th>
                     </tr>
-                    
-                    <tr class="alt">
-                        <td><input type="checkbox" name="chb[]" onclick=""/></td>
-                        <td>Bob</td>                        
-                        <td>3/4</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="chb[]" onclick=""/></td>
-                        <td>Amy</td>                        
-                        <td>1/4</td>
-                    </tr>
-                    <tr class="alt">
-                        <td><input type="checkbox" name="chb[]" onclick=""/></td>
-                        <td>Lucy</td>                        
-                        <td>0/4</td>
-                    </tr>    
+
+                    <tr id="abc" class="alt"></tr>
+                    </tr> 
+                     
                 </table>  
             </div> 
             <div class="bt">
                 <button type="button" onclick="selectAll(this)" class="b1" id="all">Select All</button>
-                <input type="submit" value="Submit" class="b2"/>
-                <button type="button" onclick="getValueWhenChecked()">check</button>
+                <input type="submit" value="Submit" onclick="getValueWhenChecked()" class="b2"/>
+                <!-- <button type="button" onclick="getValueWhenChecked()">check</button> -->
 
             </div>     
         </form>

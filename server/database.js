@@ -102,6 +102,31 @@ exports.clearCollection = function (collectionName, func) {
     });
 }
 
+exports.getUserList = function (idMap, func) {
+    var ids = [];
+    Object.keys(idMap).forEach(function (key) {
+        ids.push(server.stringToID(key));
+    });
+    exports.query("user", { "_id": { $in: ids } }, function (err, results) {
+        if (err !== null) {
+            func(err);
+        } else {
+            var map = {};
+            for (var i = 0; i < results.length; ++i) {
+                map[results[i]._id.toString()] = results[i];
+            }
+            Object.keys(idMap).forEach(function (key) {
+                var user = map[key];
+                var arr = idMap[key];
+                for (var i = 0; i < arr.length; ++i) {
+                    arr[i]["userName"] = user.name;
+                }
+            });
+            func(null);
+        }
+    });
+}
+
 /**
  * Delete the one data form a table
  * @param collectionName {string} The name of the collection
@@ -114,10 +139,10 @@ exports.delete = function (collectionName, query, func) {
             console.log("delete " + result.result.n + " records");
             func(null, result.result.n);
         }
-        else{
+        else {
             func(server.errorCode.databaseError, 0);
         }
-        
+
     });
 }
 
@@ -236,13 +261,22 @@ exports.getUser = function (userId, session, func) {
     });
 }
 
+function addUserId(map, data) {
+    var userId = data.userID;
+    if (!map.hasOwnProperty(userId)) {
+        map[userId] = []
+    }
+    map[userId].push(data);
+}
+
 /**
  * Gets the user's driver calender information
  * @param user {Object} The user got from getUser
+ * @param idMap {Object} The map for finding user name
  * @param func {function} The callback. function(errorCode error), if error is null, user["post"] will include all the information of the user,
  * User.post: {repeatedPost: [], addPost: [], cancel: []}
  */
-exports.getUserDriverInfo = function (user, func) {
+exports.getUserDriverInfo = function (user, idMap, func) {
     var id = server.getIdString(user);
     exports.query("driverrepeatedpost", { "userID": id }, function (err, posts) {
         if (err !== null) {
@@ -251,10 +285,16 @@ exports.getUserDriverInfo = function (user, func) {
         }
         user["post"] = {};
         user.post["repeatedPost"] = posts;
+        for (var i = 0; i < posts.length; ++i) {
+            addUserId(idMap, posts[i]);
+        }
         exports.query("driveradditionalpost", { "userID": id }, function (err, adPosts) {
             if (err !== null) {
                 func(err);
                 return;
+            }
+            for (var i = 0; i < adPosts.length; ++i) {
+                addUserId(idMap, adPosts[i]);
             }
             user.post["addPost"] = adPosts;
             exports.query("drivercanceledpost", { "userID": id }, function (err, cancels) {
@@ -276,17 +316,23 @@ exports.getUserDriverInfo = function (user, func) {
  * @param addPostIds {array} The addational post ids
  * @param func {function} The callback. function(errorCode err), user.repeatAppForPost and user.addAppForPost will be attached to the user
  */
-exports.getApplicationForUser = function (user, postIds, addPostIds, func) {
+exports.getApplicationForUser = function (user, idMap, postIds, addPostIds, func) {
     exports.query("repeatedapplication", { "driverPostID": { $in: postIds } }, function (err, results) {
         if (err != null) {
             func(err);
         } else {
             user["repeatAppForPost"] = results;
+            for (var i = 0; i < results.length; ++i) {
+                addUserId(idMap, results[i]);
+            }
             exports.query("additionalapplication", { "driverPostID": { $in: addPostIds } }, function (err, results) {
                 if (err != null) {
                     func(err);
                 } else {
                     user["addAppForPost"] = results;
+                    for (var i = 0; i < results.length; ++i) {
+                        addUserId(idMap, results[i]);
+                    }
                     func(null);
                 }
             })
@@ -300,7 +346,7 @@ exports.getApplicationForUser = function (user, postIds, addPostIds, func) {
  * @param func {function} The callback. function(errorCode error), if error is null, user["application"] will include all the information of the user
  * user.application: {apps: [], addApps: []}
  */
-exports.getUserPassengerInfo = function (user, func) {
+exports.getUserPassengerInfo = function (user, idMap, func) {
     var id = server.getIdString(user);
     exports.query("repeatedapplication", { "userID": id }, function (err, apps) {
         if (err !== null) {
@@ -309,12 +355,18 @@ exports.getUserPassengerInfo = function (user, func) {
         }
         user["application"] = {};
         user.application["apps"] = apps;
+        for (var i = 0; i < apps.length; ++i) {
+            addUserId(idMap, apps[i]);
+        }
         exports.query("additionalapplication", { "userID": id }, function (err, adApps) {
             if (err !== null) {
                 func(err);
                 return;
             }
             user.application["addApps"] = adApps;
+            for (var i = 0; i < adApps.length; ++i) {
+                addUserId(idMap, adApps[i]);
+            }
             func(null);
         });
     });
@@ -405,7 +457,7 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
 
     //mongodb is ok, but can not find by using this code
     //> db.driverrepeatedpost.find({"availableSeats.108": {"$exists": true},"userID":"5c0f0319244cf10ab296aa84"})
-    var dict = { "userID": userID};
+    var dict = { "userID": userID };
     dict[key] = { "$exists": true };
     console.log(dict);
     exports.query("driverrepeatedpost", dict, function (err, rpPosts) {
@@ -444,33 +496,33 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
  * @param func {Function} The callback. Function(int deleteLine)
  */
 exports.deleteAdditionalPost = function (postID, func) {
-    exports.delete("driveradditionalpost", { "_id": postID}, function(err, result){
+    exports.delete("driveradditionalpost", { "_id": postID }, function (err, result) {
         if (err != null) {
             func();
-                
+
         }
     });
     //search { "driverPostID": { $in: postIds } }
-    exports.query("additionalapplication", { "driverPostID": { $in: postID }}, function (err, addApps) {
+    exports.query("additionalapplication", { "driverPostID": { $in: postID } }, function (err, addApps) {
         if (err != null) {
             func();
             return;
         }
         //exsits
-        if(additionalapplication.length != 0){
+        if (additionalapplication.length != 0) {
             //update
             var n = addApps.postID.length;
-            for(i = 0; i < n; i++){
+            for (i = 0; i < n; i++) {
                 if (addApps.postID[i] = postID) {
-                    ddApps.postID[i] = addApps.postID[n-1];
-                    addApps.status[i] = addApps.status[n-1];
+                    ddApps.postID[i] = addApps.postID[n - 1];
+                    addApps.status[i] = addApps.status[n - 1];
                     n--;
                 }
-            } 
-        exports.update("additionalapplication", {}, set, func); 
+            }
+            exports.update("additionalapplication", {}, set, func);
         }
         //not exists
-        else{
+        else {
             func(result);
         }
     });
@@ -485,40 +537,40 @@ exports.deleteAdditionalPost = function (postID, func) {
  * @param func {Function} The callback. Function(int deleteLine)
  */
 exports.deleteRepeatedPost = function (postID, func) {
-    
-    exports.delete("driverrepeatedpost", {"_id": postID}, function(err, result){
+
+    exports.delete("driverrepeatedpost", { "_id": postID }, function (err, result) {
         if (err != null) {
             func();
         }
-        else{
+        else {
             func(result);
         }
     });
     //search { "driverPostID": { $in: postIds } }
-    exports.query("additionalapplication", { "driverPostID": { $in: postID }}, function (err, addApps) {
+    exports.query("additionalapplication", { "driverPostID": { $in: postID } }, function (err, addApps) {
         if (err != null) {
             func();
             return;
         }
         //exsits
-        if(additionalapplication.length != 0){
+        if (additionalapplication.length != 0) {
             //update
             var n = addApps.postID.length;
-            for(i = 0; i < n; i++){
+            for (i = 0; i < n; i++) {
                 if (addApps.postID[i] = postID) {
-                    ddApps.postID[i] = addApps.postID[n-1];
-                    addApps.status[i] = addApps.status[n-1];
+                    ddApps.postID[i] = addApps.postID[n - 1];
+                    addApps.status[i] = addApps.status[n - 1];
                     n--;
                 }
-            } 
-        exports.update("additionalapplication", {}, set, func); 
+            }
+            exports.update("additionalapplication", {}, set, func);
         }
         //not exists
-        else{
+        else {
             func(result);
         }
     });
-    
+
 }
 
 /**
@@ -529,45 +581,45 @@ exports.deleteRepeatedPost = function (postID, func) {
  * @param func {Function} The callback. Function(int deleteLine)
  */
 exports.deleteRepeatedApplication = function (appID, func) {
-    exports.query("repeatedapplication", { "_id": appID}, function (err, rpApps) {
+    exports.query("repeatedapplication", { "_id": appID }, function (err, rpApps) {
         if (err !== null) {
             func();
             return;
         }
 
-        if(rpApps.length != 0){
+        if (rpApps.length != 0) {
             var num = rpApps.passengerNumber;
-            exports.delete("repeatedapplication", { "_id": appID}, function(err, result){
+            exports.delete("repeatedapplication", { "_id": appID }, function (err, result) {
                 if (err != null) {
                     func();
                     return;
                 }
-                else{
+                else {
                     func(result);
                 }
             });
             var ids = [];
             var n = rpApps.status.length;
-            for(i = 0; i < n; i++){
-                if(rpApps.status[i] == 1){
+            for (i = 0; i < n; i++) {
+                if (rpApps.status[i] == 1) {
                     ids.push(server.stringToID(rpApps.driverPostID[i]));
                 }
             }
 
             //availableSeats: {"110":4, "310":4} value + num
-            exports.update("driverrepeatedpost", { "_id": { $in: ids} }, num, function(err, result){
+            exports.update("driverrepeatedpost", { "_id": { $in: ids } }, num, function (err, result) {
                 if (err != null) {
                     func();
                     return;
                 }
             });
         }
-        else{
+        else {
             func(0);
-            return; 
+            return;
         }
-    });    
-      
+    });
+
 }
 
 
@@ -579,43 +631,43 @@ exports.deleteRepeatedApplication = function (appID, func) {
  * @param func {Function} The callback. Function(int deleteLine)
  */
 exports.deleteAdditionalApplication = function (appID, func) {
-    exports.query("additionalapplication", { "_id": appID}, function (err, addApps) {
+    exports.query("additionalapplication", { "_id": appID }, function (err, addApps) {
         if (err !== null) {
             func();
             return;
         }
 
-        if(addApps.length != 0){
+        if (addApps.length != 0) {
             var num = addApps.passengerNumber;
-            exports.delete("repeatedapplication", { "_id": appID}, function(err, result){
+            exports.delete("repeatedapplication", { "_id": appID }, function (err, result) {
                 if (err != null) {
                     func();
                     return;
                 }
-                else{
+                else {
                     func(result);
                 }
             });
             var ids = [];
             var n = addApps.status.length;
-            for(i = 0; i < n; i++){
-                if(addApps.status[i] == 1){
+            for (i = 0; i < n; i++) {
+                if (addApps.status[i] == 1) {
                     ids.push(server.stringToID(rpPosts.driverPostID[i]));
                 }
             }
 
             //availableSeats: {"110":4, "310":4} value + num
-            exports.update("driverrepeatedpost", { "_id": { $in: ids} }, num, function(err, result){
+            exports.update("driverrepeatedpost", { "_id": { $in: ids } }, num, function (err, result) {
                 if (err != null) {
                     func();
                     return;
                 }
             });
         }
-        else{
+        else {
             func(0);
-            return; 
+            return;
         }
-    });    
-      
+    });
+
 }
