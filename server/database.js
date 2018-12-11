@@ -360,13 +360,13 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
     var t = 100 * day + time;
     var key = "availableSeats." + t;
     console.log("key:" + key);
-    //cursor = db.inventory.find({"size.uom": "cm"})
-    //# 查询所有文档中，没有item字段的记录
-    //cursor = db.inventory.find({"item": {"$exists": False}})
 
     //mongodb is ok, but can not find by using this code
-    //> db.driverrepeatedpost.find({"availableSeats.108": {"$exists": true},"userID":"5c070e1e974f84637bb083ba"})
-    exports.query("driverrepeatedpost", { "userID": userID, key: { "$exists": true } }, function (err, rpPosts) {
+    //> db.driverrepeatedpost.find({"availableSeats.108": {"$exists": true},"userID":"5c0f0319244cf10ab296aa84"})
+    var dict = { "userID": userID};
+    dict[key] = { "$exists": true };
+    console.log(dict);
+    exports.query("driverrepeatedpost", dict, function (err, rpPosts) {
         if (err !== null) {
             func(err);
             return;
@@ -385,6 +385,7 @@ exports.checkRepeatedValidate = function (userID, day, time, func) {
                 console.log("rpApplications:" + rpApplications);
                 if (rpApplications.length != 0) {
                     func(server.errorCode.timeConflict);
+                    return;
                 }
                 func(null);
             });
