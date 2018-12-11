@@ -122,19 +122,19 @@
                         </div>
                     </div>
                 </div>
-                <p>available seat number: <input type="text" class="seatNumber"></input></p>
+                <p>available seat number: <input type="text" id="repeatedSeatNumber"></input></p>
                 <button type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
                         class="glyphicon glyphicon-refresh"></i>
                     Refresh</button>
                 <button id="repeated-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                     Post</button>
-                <div class="status"> </div>
+                <div id="RepeatedPostStatus"> </div>
             </div>
 
             <div id="SinglePost" class="tabcontent col-sm-4">
 
-                date and day: <input type="date" id="date_and_day">
-
+                date and day: <input type="date" id="date_and_day"/>
+                time: <input type="time" id="time"/>
                 <div class="tripchoice">
                     <div class="subchoice">
                         <button class="subchoicebtn">To Campus/From Campus</button>
@@ -144,13 +144,13 @@
                         </div>
                     </div>
                 </div>
-                <p>available seat number: <input type="text" class="seatNumber"></input></p>
+                <p>available seat number: <input type="text" id="singleSeatNumber"></input></p>
                 <button type="button" class="cmd-refresh-btn btn btn-default tripchoice-btn"><i
                         class="glyphicon glyphicon-refresh"></i>
                     Refresh</button>
                 <button id="single-post" type="button" class="btn btn-default tripchoice-btn"><i class="glyphicon glyphicon-send"></i>
                     Post</button>
-                <div class="status"> </div>
+                <div id="SinglePostStatus"> </div>
             </div>
 
 
