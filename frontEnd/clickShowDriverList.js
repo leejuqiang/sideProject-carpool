@@ -1,8 +1,8 @@
 
 var lightPanel = document.getElementById("light");
 var fadePanel = document.getElementById('fade');;
-// var tdriverPostList = [];
-var tdriverPostList = [{ "_id" : "5c102d1a81014139f34d93d5", "userID" : "5c102d1a81014139f34d93d1", "lat" : 37.78, "long" : 122.46, "availableSeats" : { "108" : 3, "310" : 3 }, "maxSeats" : 3, "semester" : "1", "type" : 0 }];
+var tdriverPostList = [];
+// var tdriverPostList = [{ "_id" : "5c102d1a81014139f34d93d5", "userID" : "5c102d1a81014139f34d93d1", "lat" : 37.78, "long" : 122.46, "availableSeats" : { "108" : 3, "310" : 3 }, "maxSeats" : 3, "semester" : "1", "type" : 0 }];
 var passengerNum;
 var day;
 var time;
