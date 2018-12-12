@@ -44,9 +44,43 @@ server/server.js
 frontEnd/check/driverPanel.html
 frontEnd/driverPanel.js
 
-Zun Yang:
-server/databasePassengers.js
+Juqiang Li:
 server/server.js
-server/passengerPanel.js
-frontEnd/check/passengerPage.html
-frontEnd/map.js
+server/database.js
+server/errorCode.js
+server/login.js
+server/page.js
+server/refreshData.js
+server/syncOps.js
+server/test.js
+frontEnd/css/color.css
+frontEnd/css/home.css
+frontEnd/css/index.css
+frontEnd/css/login.css
+frontEnd/home.html
+frontEnd/index.html
+frontEnd/login.html
+frontEnd/index.js
+frontEnd/login.js
+
+Linjing Shao:
+frontEnd/navigation.css
+frontEnd/navigationBar.js
+frontEnd/navigationBar.html
+server/errorCode.js
+server/database.js
+server/test.js
+
+Tuo Sun:
+server/handle_*.js
+server/server.js
+frontEnd/check/driverPanel.html
+frontEnd/driverPanel.js
+
+Zun Yang:
+server/databasePassengers.js //all the database methods for passengers
+server/server.js //mapping handler to path
+server/passengerPanel.js //all the back-end handlers for passengers,includin APIs for fetch driver posts data and apply.
+frontEnd/check/passengerPage.html //front-end passenger page, used vue.js and bootstrap
+frontEnd/map.js //google map component for this website
+frontEnd/mapExample.js //google map usage example
